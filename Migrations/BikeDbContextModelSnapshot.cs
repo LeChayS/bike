@@ -531,16 +531,7 @@ namespace bike.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<decimal?>("MucLuong")
-                        .HasColumnType("decimal(18,0)");
-
-                    b.Property<DateTime?>("NgayNghiViec")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("NgayTao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NgayVaoLam")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("RoleMaVaiTro")

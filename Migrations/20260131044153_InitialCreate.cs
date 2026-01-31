@@ -104,9 +104,6 @@ namespace bike.Migrations
                     DiaChi = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NgayVaoLam = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    NgayNghiViec = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    MucLuong = table.Column<decimal>(type: "decimal(18,0)", nullable: true),
                     RoleMaVaiTro = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
