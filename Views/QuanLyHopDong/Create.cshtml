@@ -1,0 +1,1336 @@
+﻿@model bike.Models.HopDong
+
+@{
+    ViewData["Title"] = "Tạo Hợp Đồng Mới";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    /* Simple and clean design */
+    .create-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+    
+    .page-header {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .page-header h2 {
+        color: #333;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .page-header p {
+        color: #666;
+        margin: 5px 0 0 0;
+    }
+    
+    .form-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #007bff;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 10px 20px;
+        font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        padding: 10px 20px;
+        font-weight: 500;
+    }
+    
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        padding: 10px 20px;
+        font-weight: 500;
+    }
+    
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .btn-outline-secondary {
+        border-color: #6c757d;
+        color: #6c757d;
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    /* Vehicle selection area */
+    .vehicle-selection {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .vehicle-filters {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .filter-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+    
+    .filter-group {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .filter-group label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .quick-filter-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-quick-filter {
+        background: #fff;
+        border: 1px solid #ddd;
+        color: #666;
+        padding: 4px 12px;
+        font-size: 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .btn-quick-filter:hover, .btn-quick-filter.active {
+        background: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
+    
+    .vehicle-search-info {
+        background: #e3f2fd;
+        border: 1px solid #bbdefb;
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 15px;
+        font-size: 13px;
+        color: #1976d2;
+    }
+    
+    .vehicle-item {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .vehicle-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 6px;
+        object-fit: cover;
+        border: 1px solid #e0e0e0;
+        flex-shrink: 0;
+    }
+    
+    .vehicle-image-placeholder {
+        width: 60px;
+        height: 60px;
+        border-radius: 6px;
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+    
+    .vehicle-info-display {
+        flex: 1;
+    }
+    
+    .vehicle-info-display h6 {
+        margin: 0 0 5px 0;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    .vehicle-info-display small {
+        color: #666;
+        font-size: 12px;
+    }
+    
+    .vehicle-price {
+        font-weight: 600;
+        color: #28a745;
+        margin: 0 15px;
+        text-align: right;
+        min-width: 100px;
+    }
+    
+    .no-vehicles-selected {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+        font-style: italic;
+    }
+    
+    .selected-vehicles-summary {
+        background: #e8f5e8;
+        border: 1px solid #c8e6c9;
+        border-radius: 6px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .selected-vehicles-summary h6 {
+        margin: 0 0 10px 0;
+        color: #2e7d32;
+    }
+    
+    /* Select2 custom styling for vehicle images */
+    .select2-results__option {
+        padding: 0 !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .select2-results__option:hover {
+        background: #f8f9fa !important;
+    }
+    
+    .select2-results__option--highlighted {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+        color: white !important;
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+    
+    .select2-results__option--highlighted .select2-vehicle-option {
+        color: white;
+    }
+    
+    .select2-results__option--highlighted .vehicle-option-info .vehicle-details {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .select2-results__option--highlighted .vehicle-option-price {
+        color: #fff !important;
+    }
+    
+    .select2-vehicle-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        width: 100%;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 6px;
+        margin: 2px 4px;
+    }
+    
+    .select2-vehicle-option img {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        object-fit: cover;
+        border: 2px solid #e0e0e0;
+        flex-shrink: 0;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .select2-results__option:hover .select2-vehicle-option img {
+        transform: scale(1.02);
+    }
+    
+    .select2-vehicle-option .vehicle-option-image-placeholder {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-size: 16px;
+        flex-shrink: 0;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .select2-results__option:hover .select2-vehicle-option .vehicle-option-image-placeholder {
+        transform: scale(1.02);
+    }
+    
+    .select2-vehicle-option .vehicle-option-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .select2-vehicle-option .vehicle-option-info .vehicle-name {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .select2-results__option:hover .select2-vehicle-option .vehicle-option-info .vehicle-name {
+        color: #333;
+    }
+    
+    .select2-vehicle-option .vehicle-option-info .vehicle-details {
+        font-size: 12px;
+        color: #666;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .select2-results__option:hover .select2-vehicle-option .vehicle-option-info .vehicle-details {
+        color: #666;
+    }
+    
+    .select2-vehicle-option .vehicle-option-price {
+        font-weight: 600;
+        color: #28a745;
+        font-size: 12px;
+        text-align: right;
+        min-width: 80px;
+        flex-shrink: 0;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: rgba(40, 167, 69, 0.1);
+    }
+    
+    .select2-results__option:hover .select2-vehicle-option .vehicle-option-price {
+        background: rgba(40, 167, 69, 0.15);
+    }
+    
+    /* Rental period section */
+    .rental-period-section {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .preset-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+    
+    .btn-preset {
+        background: #fff;
+        border: 1px solid #ddd;
+        color: #666;
+        padding: 6px 12px;
+        font-size: 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .btn-preset:hover, .btn-preset.active {
+        background: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+    
+    /* Summary box */
+    .summary-box {
+        background: #f8f9fa;
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .summary-box h4 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 15px;
+    }
+    
+    .total-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+        color: #28a745;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    /* Validation messages */
+    .validation-message {
+        font-size: 12px;
+        margin-top: 5px;
+        padding: 5px 8px;
+        border-radius: 4px;
+        border-left: 3px solid;
+        display: none; /* Ẩn mặc định */
+    }
+    
+    .validation-message:not(:empty) {
+        display: block; /* Chỉ hiển thị khi có nội dung */
+    }
+    
+    .validation-message.text-info {
+        background-color: #e3f2fd;
+        border-left-color: #2196f3;
+        color: #1976d2;
+    }
+    
+    .validation-message.text-warning {
+        background-color: #fff3e0;
+        border-left-color: #ff9800;
+        color: #f57c00;
+    }
+    
+    .validation-message.text-danger {
+        background-color: #ffebee;
+        border-left-color: #f44336;
+        color: #d32f2f;
+    }
+    
+    .validation-message.text-success {
+        background-color: #e8f5e8;
+        border-left-color: #4caf50;
+        color: #2e7d32;
+    }
+    
+    /* Currency preview */
+    .currency-preview {
+        color: #666;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+    
+
+    
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .create-container {
+            padding: 0 10px;
+        }
+        
+        .form-card {
+            padding: 15px;
+        }
+        
+        .filter-row {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .vehicle-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .vehicle-price {
+            margin: 0;
+            text-align: left;
+            min-width: auto;
+        }
+        
+        .vehicle-image, .vehicle-image-placeholder {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .select2-vehicle-option {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+        
+        .select2-vehicle-option img, .select2-vehicle-option .vehicle-option-image-placeholder {
+            width: 30px;
+            height: 30px;
+            font-size: 12px;
+        }
+        
+        .select2-vehicle-option .vehicle-option-price {
+            text-align: left;
+            min-width: auto;
+        }
+        
+        /* Mobile hover effects */
+        .select2-results__option:hover {
+            transform: translateX(2px);
+        }
+        
+        .select2-results__option--highlighted {
+            transform: translateX(3px);
+        }
+        
+        .select2-results__option:hover .select2-vehicle-option img,
+        .select2-results__option:hover .select2-vehicle-option .vehicle-option-image-placeholder {
+            transform: scale(1.02);
+        }
+        
+        .select2-results__option:hover .select2-vehicle-option .vehicle-option-price {
+            transform: scale(1.02);
+        }
+        
+
+    }
+    
+    /* Badge styles for vehicle status */
+    .badge {
+        display: inline-block;
+        padding: 0.25em 0.6em;
+        font-size: 0.75em;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.375rem;
+    }
+    
+    .badge-success {
+        color: #fff;
+        background-color: #28a745;
+    }
+    
+    .badge-primary {
+        color: #fff;
+        background-color: #007bff;
+    }
+    
+    .badge-warning {
+        color: #212529;
+        background-color: #ffc107;
+    }
+    
+    .badge-danger {
+        color: #fff;
+        background-color: #dc3545;
+    }
+    
+    .badge-dark {
+        color: #fff;
+        background-color: #343a40;
+    }
+    
+    .badge-secondary {
+        color: #fff;
+        background-color: #6c757d;
+    }
+    
+    .vehicle-status {
+        margin-top: 2px;
+    }
+    
+    /* File upload styling */
+    .file-upload-container {
+        background: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .file-upload-container:hover {
+        border-color: #dee2e6;
+        background: #f8f9fa;
+    }
+    
+    .file-upload-container input[type="file"] {
+        display: none;
+    }
+    
+    .file-upload-label {
+        cursor: pointer;
+        display: block;
+        padding: 15px;
+        border-radius: 6px;
+        background: #fff;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s ease;
+    }
+    
+    .file-upload-label:hover {
+        background: #f8f9fa;
+        border-color: #dee2e6;
+    }
+    
+    .file-upload-icon {
+        font-size: 2rem;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+    
+    .file-upload-text {
+        color: #495057;
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+    
+    .file-upload-hint {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    
+    .file-preview {
+        margin-top: 10px;
+        padding: 15px;
+        background: #e8f5e8;
+        border: 1px solid #c8e6c9;
+        border-radius: 8px;
+        display: none;
+        position: relative;
+    }
+    
+    .file-preview.show {
+        display: block;
+    }
+    
+    .file-preview-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .file-preview-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+    
+    .file-preview-info {
+        flex: 1;
+    }
+    
+    .file-preview-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 2px;
+    }
+    
+    .file-preview-size {
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .file-preview-actions {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+    }
+    
+    .btn-preview {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-preview-view {
+        background: #007bff;
+        color: white;
+    }
+    
+    .btn-preview-view:hover {
+        background: #0056b3;
+    }
+    
+    .btn-preview-delete {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .btn-preview-delete:hover {
+        background: #c82333;
+    }
+    
+    .file-preview-icon {
+        font-size: 1.2rem;
+        color: #28a745;
+        margin-right: 8px;
+    }
+    
+    .file-preview-pdf {
+        background: #fff3cd;
+        border-color: #ffeaa7;
+    }
+    
+    .file-preview-pdf .file-preview-icon {
+        color: #856404;
+    }
+    
+    .select2-vehicle-option .vehicle-status .badge {
+        font-size: 0.7em;
+        padding: 0.2em 0.5em;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .select2-results__option:hover .select2-vehicle-option .vehicle-status .badge {
+        transform: scale(1.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Select2 dropdown container styling */
+    .select2-dropdown {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+    
+    .select2-results {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .select2-results::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .select2-results::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    
+    .select2-results::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+    
+    .select2-results::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
+<div class="create-container">
+    <div class="page-header">
+        <h2><i class="bi bi-file-earmark-plus"></i> Tạo Hợp Đồng Thuê Xe Mới</h2>
+        <p>Nhập đầy đủ thông tin để tạo hợp đồng</p>
+    </div>
+    <form asp-action="Create" method="post" id="createContractForm" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+         
+        <!-- Chọn xe thuê -->
+        <div class="form-card">
+            <div class="section-title"><i class="bi bi-bicycle"></i> Chọn xe thuê</div>
+            <div class="vehicle-selection">
+                <div class="vehicle-filters">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Hãng xe</label>
+                            <select id="filterHang" class="form-select form-select-sm">
+                                <option value="">Tất cả hãng</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Loại xe</label>
+                            <select id="filterLoai" class="form-select form-select-sm">
+                                <option value="">Tất cả loại</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Khoảng giá (đ/ngày)</label>
+                            <select id="filterGia" class="form-select form-select-sm">
+                                <option value="">Tất cả giá</option>
+                                <option value="0-100000">Dưới 100k</option>
+                                <option value="100000-200000">100k - 200k</option>
+                                <option value="200000-300000">200k - 300k</option>
+                                <option value="300000-500000">300k - 500k</option>
+                                <option value="500000-999999999">Trên 500k</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button type="button" id="btnClearFilters" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-arrow-clockwise"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                    <div class="quick-filter-buttons">
+                        <button type="button" class="btn-quick-filter" data-filter="honda">Honda</button>
+                        <button type="button" class="btn-quick-filter" data-filter="yamaha">Yamaha</button>
+                        <button type="button" class="btn-quick-filter" data-filter="suzuki">Suzuki</button>
+                        <button type="button" class="btn-quick-filter" data-filter="cheap">Giá rẻ (&lt;150k)</button>
+                        <button type="button" class="btn-quick-filter" data-filter="premium">Cao cấp (&gt;300k)</button>
+                        <button type="button" class="btn-quick-filter" data-filter="xe-may">Xe máy</button>
+                        <button type="button" class="btn-quick-filter" data-filter="xe-so">Xe số</button>
+                    </div>
+                </div>
+                
+                <div class="vehicle-search-info">
+                    <i class="bi bi-info-circle"></i>
+                    <span id="searchInfo">Hiển thị <span id="availableCount">0</span> xe khả dụng. Sử dụng tìm kiếm hoặc bộ lọc để tìm xe nhanh hơn.</span>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-10">
+                        <select id="availableVehicles" class="form-select">
+                            <option value="">-- Gõ để tìm kiếm xe (tên, biển số, hãng) --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="btnAddVehicle" class="btn btn-success w-100">
+                            <i class="bi bi-plus-circle"></i> Thêm
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="selectedVehiclesList">
+                    <div class="no-vehicles-selected" id="noVehiclesMessage">
+                        <i class="bi bi-info-circle"></i> Chưa có xe nào được chọn
+                    </div>
+                </div>
+                
+                <div class="text-danger" id="vehicleSelectionError"></div>
+            </div>
+            
+            <div class="selected-vehicles-summary" id="vehiclesSummary" style="display: none;">
+                <h6><i class="bi bi-list-check"></i> Tóm tắt xe đã chọn:</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Số lượng xe:</strong> <span id="totalVehicles">0</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Tổng giá thuê/ngày:</strong> <span id="totalDailyPrice" class="text-success">0đ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Thông tin khách hàng -->
+        <div class="form-card">
+            <div class="section-title"><i class="bi bi-person"></i> Thông tin khách hàng</div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="HoTenKhach" class="form-label">Họ tên khách <span class="text-danger">*</span></label>
+                        <input asp-for="HoTenKhach" class="form-control" id="HoTenKhach" placeholder="Nhập họ tên đầy đủ" />
+                        <div id="nameValidationMessage" class="validation-message"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="SoDienThoai" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                        <input asp-for="SoDienThoai" class="form-control" id="SoDienThoai" placeholder="VD: 0901234567" maxlength="11" />
+                        <div id="phoneValidationMessage" class="validation-message"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="SoCCCD" class="form-label">CCCD/CMND <span class="text-danger">*</span></label>
+                        <input asp-for="SoCCCD" class="form-control" id="SoCCCD" placeholder="Nhập số CCCD/CMND (12 số)" maxlength="12" />
+                        <div id="cccdValidationMessage" class="validation-message"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="DiaChi" class="form-label">Địa chỉ</label>
+                        <input asp-for="DiaChi" class="form-control" placeholder="Nhập địa chỉ (không bắt buộc)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upload giấy tờ -->
+        <div class="form-card">
+            <div class="section-title"><i class="bi bi-file-earmark-arrow-up"></i> Upload giấy tờ (không bắt buộc)</div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <div class="file-upload-container">
+                            <label for="cccdMatTruoc" class="file-upload-label">
+                                <div class="file-upload-icon">
+                                    <i class="bi bi-card-image"></i>
+                                </div>
+                                <div class="file-upload-text">CCCD mặt trước</div>
+                                <div class="file-upload-hint">Click để chọn file (JPG, PNG, PDF - tối đa 5MB)</div>
+                            </label>
+                            <input type="file" class="form-control" id="cccdMatTruoc" name="cccdMatTruoc" accept="image/*,.pdf" />
+                            <div class="file-preview" id="cccdMatTruocPreview">
+                                <div class="file-preview-content">
+                                    <div class="file-preview-info">
+                                        <div class="file-preview-name"></div>
+                                        <div class="file-preview-size"></div>
+                                    </div>
+                                </div>
+                                <div class="file-preview-actions">
+                                    <button type="button" class="btn-preview btn-preview-view" onclick="previewFile('cccdMatTruoc')">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </button>
+                                    <button type="button" class="btn-preview btn-preview-delete" onclick="deleteFile('cccdMatTruoc')">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="file-upload-container">
+                            <label for="bangLaiXe" class="file-upload-label">
+                                <div class="file-upload-icon">
+                                    <i class="bi bi-card-text"></i>
+                                </div>
+                                <div class="file-upload-text">Bằng lái xe</div>
+                                <div class="file-upload-hint">Click để chọn file (JPG, PNG, PDF - tối đa 5MB)</div>
+                            </label>
+                            <input type="file" class="form-control" id="bangLaiXe" name="bangLaiXe" accept="image/*,.pdf" />
+                            <div class="file-preview" id="bangLaiXePreview">
+                                <div class="file-preview-content">
+                                    <div class="file-preview-info">
+                                        <div class="file-preview-name"></div>
+                                        <div class="file-preview-size"></div>
+                                    </div>
+                                </div>
+                                <div class="file-preview-actions">
+                                    <button type="button" class="btn-preview btn-preview-view" onclick="previewFile('bangLaiXe')">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </button>
+                                    <button type="button" class="btn-preview btn-preview-delete" onclick="deleteFile('bangLaiXe')">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <div class="file-upload-container">
+                            <label for="cccdMatSau" class="file-upload-label">
+                                <div class="file-upload-icon">
+                                    <i class="bi bi-card-image"></i>
+                                </div>
+                                <div class="file-upload-text">CCCD mặt sau</div>
+                                <div class="file-upload-hint">Click để chọn file (JPG, PNG, PDF - tối đa 5MB)</div>
+                            </label>
+                            <input type="file" class="form-control" id="cccdMatSau" name="cccdMatSau" accept="image/*,.pdf" />
+                            <div class="file-preview" id="cccdMatSauPreview">
+                                <div class="file-preview-content">
+                                    <div class="file-preview-info">
+                                        <div class="file-preview-name"></div>
+                                        <div class="file-preview-size"></div>
+                                    </div>
+                                </div>
+                                <div class="file-preview-actions">
+                                    <button type="button" class="btn-preview btn-preview-view" onclick="previewFile('cccdMatSau')">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </button>
+                                    <button type="button" class="btn-preview btn-preview-delete" onclick="deleteFile('cccdMatSau')">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="file-upload-container">
+                            <label for="giayToKhac" class="file-upload-label">
+                                <div class="file-upload-icon">
+                                    <i class="bi bi-file-earmark"></i>
+                                </div>
+                                <div class="file-upload-text">Giấy tờ khác (nếu có)</div>
+                                <div class="file-upload-hint">Click để chọn file (JPG, PNG, PDF - tối đa 5MB)</div>
+                            </label>
+                            <input type="file" class="form-control" id="giayToKhac" name="giayToKhac" accept="image/*,.pdf" />
+                            <div class="file-preview" id="giayToKhacPreview">
+                                <div class="file-preview-content">
+                                    <div class="file-preview-info">
+                                        <div class="file-preview-name"></div>
+                                        <div class="file-preview-size"></div>
+                                    </div>
+                                </div>
+                                <div class="file-preview-actions">
+                                    <button type="button" class="btn-preview btn-preview-view" onclick="previewFile('giayToKhac')">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </button>
+                                    <button type="button" class="btn-preview btn-preview-delete" onclick="deleteFile('giayToKhac')">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <strong>Lưu ý:</strong> Tất cả các giấy tờ trên đều không bắt buộc. Bạn có thể để trống khi tạo hợp đồng.
+            </div>
+        </div>
+        
+        <!-- Thời gian thuê -->
+        <div class="form-card">
+            <div class="section-title"><i class="bi bi-calendar"></i> Thời gian thuê</div>
+            
+            <div class="rental-period-section mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Số ngày thuê</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="rentalDays" min="1" max="30" placeholder="Nhập số ngày" />
+                            <span class="input-group-text">ngày</span>
+                        </div>
+                        <small class="form-text text-muted">Nhập số ngày để tự động tính ngày trả xe</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Chọn nhanh</label>
+                        <div class="preset-buttons">
+                            <button type="button" class="btn-preset" onclick="setRentalDays(1)">1 ngày</button>
+                            <button type="button" class="btn-preset" onclick="setRentalDays(3)">3 ngày</button>
+                            <button type="button" class="btn-preset" onclick="setRentalDays(7)">1 tuần</button>
+                            <button type="button" class="btn-preset" onclick="setRentalDays(14)">2 tuần</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="NgayNhanXe" class="form-label">Ngày nhận xe <span class="text-danger">*</span></label>
+                        <input asp-for="NgayNhanXe" type="date" class="form-control" id="NgayNhanXe" />
+                        <span asp-validation-for="NgayNhanXe" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="NgayTraXeDuKien" class="form-label">Ngày trả xe dự kiến <span class="text-danger">*</span></label>
+                        <input asp-for="NgayTraXeDuKien" type="date" class="form-control" id="NgayTraXeDuKien" />
+                        <span asp-validation-for="NgayTraXeDuKien" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Thông tin tài chính -->
+        <div class="form-card">
+            <div class="section-title"><i class="bi bi-cash-coin"></i> Thông tin tài chính</div>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Tổng giá thuê/ngày</label>
+                        <input type="text" class="form-control" id="TotalDailyRateDisplay" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="TienCoc" class="form-label">Tiền cọc</label>
+                        <input asp-for="TienCoc" class="form-control" id="TienCoc" type="number" min="0" step="1000" value="0" placeholder="Ví dụ: 500000" />
+                        <span asp-validation-for="TienCoc" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="PhuPhi" class="form-label">Phụ phí</label>
+                        <input asp-for="PhuPhi" class="form-control" type="number" min="0" step="1000" value="0" id="PhuPhi" placeholder="Ví dụ: 100000" />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="GhiChu" class="form-label">Ghi chú</label>
+                <textarea asp-for="GhiChu" class="form-control" rows="3" placeholder="Ghi chú thêm nếu có..."></textarea>
+            </div>
+        </div>
+        
+        <!-- Tổng kết -->
+        <div class="summary-box">
+            <h4>Tổng kết hợp đồng</h4>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <p>Số xe thuê:</p>
+                    <p>Số ngày thuê:</p>
+                    <p>Tiền thuê xe:</p>
+                    <p>Tiền cọc:</p>
+                    <p>Phụ phí:</p>
+                </div>
+                <div class="col-6 text-end">
+                    <p><span id="soXeThue">0</span> xe</p>
+                    <p><span id="soNgayThue">0</span> ngày</p>
+                    <p><span id="tienThue">0</span></p>
+                    <p><span id="tienCocDisplay">0</span></p>
+                    <p><span id="phuPhiDisplay">0</span></p>
+                </div>
+            </div>
+            <hr />
+            <div class="total-amount">
+                Tổng cộng: <span id="tongTien">0</span>
+            </div>
+        </div>
+        
+        <input type="hidden" asp-for="TongTien" id="TongTienInput" />
+        
+        <button type="submit" class="btn btn-success w-100 mb-3">
+            <i class="bi bi-check-circle"></i> Tạo Hợp Đồng
+        </button>
+        
+        <a asp-action="Index" class="btn btn-secondary w-100">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+    <!-- Select2 CSS và JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <!-- Pass vehicle data to JavaScript -->
+    <script>
+        window.XeList = @Html.Raw(Json.Serialize(ViewBag.XeList ?? new List<object>()));
+    </script>
+    
+    <!-- File upload preview functionality -->
+    <script>
+        $(document).ready(function() {
+            // File upload preview functionality
+            function handleFileUpload(inputId, previewId) {
+                const input = document.getElementById(inputId);
+                const preview = document.getElementById(previewId);
+                
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Validate file size (5MB limit)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('File quá lớn! Vui lòng chọn file nhỏ hơn 5MB.');
+                            input.value = '';
+                            preview.classList.remove('show');
+                            return;
+                        }
+                        
+                        // Validate file type
+                        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+                        if (!allowedTypes.includes(file.type)) {
+                            alert('Chỉ chấp nhận file JPG, PNG hoặc PDF!');
+                            input.value = '';
+                            preview.classList.remove('show');
+                            return;
+                        }
+                        
+                        // Update preview content
+                        const previewContent = preview.querySelector('.file-preview-content');
+                        const previewInfo = preview.querySelector('.file-preview-info');
+                        const previewName = preview.querySelector('.file-preview-name');
+                        const previewSize = preview.querySelector('.file-preview-size');
+                        
+                        // Clear any existing image
+                        const existingImage = previewContent.querySelector('.file-preview-image');
+                        if (existingImage) {
+                            existingImage.remove();
+                        }
+                        
+                        // Add image preview if it's an image file
+                        if (file.type.startsWith('image/')) {
+                            const img = document.createElement('img');
+                            img.className = 'file-preview-image';
+                            img.src = URL.createObjectURL(file);
+                            previewContent.insertBefore(img, previewInfo);
+                        }
+                        
+                        // Update file info
+                        previewName.textContent = file.name;
+                        previewSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+                        
+                        // Add PDF class if it's a PDF
+                        if (file.type === 'application/pdf') {
+                            preview.classList.add('file-preview-pdf');
+                        } else {
+                            preview.classList.remove('file-preview-pdf');
+                        }
+                        
+                        preview.classList.add('show');
+                    } else {
+                        preview.classList.remove('show');
+                    }
+                });
+            }
+            
+            // Initialize file upload previews
+            handleFileUpload('cccdMatTruoc', 'cccdMatTruocPreview');
+            handleFileUpload('cccdMatSau', 'cccdMatSauPreview');
+            handleFileUpload('bangLaiXe', 'bangLaiXePreview');
+            handleFileUpload('giayToKhac', 'giayToKhacPreview');
+        });
+        
+        // Function to preview file in a modal
+        function previewFile(inputId) {
+            const input = document.getElementById(inputId);
+            const file = input.files[0];
+            
+            if (!file) {
+                alert('Không có file để xem!');
+                return;
+            }
+            
+            // Create modal for preview
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'filePreviewModal';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Xem trước: ${file.name}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            ${file.type.startsWith('image/') 
+                                ? `<img src="${URL.createObjectURL(file)}" class="img-fluid" style="max-height: 500px;" />`
+                                : `<div class="alert alert-info">
+                                    <i class="bi bi-file-pdf"></i>
+                                    <strong>File PDF:</strong> ${file.name}
+                                    <br><small>Không thể xem trước file PDF. Vui lòng tải về để xem.</small>
+                                   </div>`
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <a href="${URL.createObjectURL(file)}" download="${file.name}" class="btn btn-primary">
+                                <i class="bi bi-download"></i> Tải về
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('filePreviewModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body and show
+            document.body.appendChild(modal);
+            const bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+            
+            // Clean up modal when hidden
+            modal.addEventListener('hidden.bs.modal', function() {
+                modal.remove();
+            });
+        }
+        
+        // Function to delete file
+        function deleteFile(inputId) {
+            if (confirm('Bạn có chắc chắn muốn xóa file này?')) {
+                const input = document.getElementById(inputId);
+                const preview = document.getElementById(inputId + 'Preview');
+                
+                // Clear the file input
+                input.value = '';
+                
+                // Hide the preview
+                preview.classList.remove('show');
+                
+                // Clear preview content
+                const previewContent = preview.querySelector('.file-preview-content');
+                const previewName = preview.querySelector('.file-preview-name');
+                const previewSize = preview.querySelector('.file-preview-size');
+                
+                // Remove image if exists
+                const existingImage = previewContent.querySelector('.file-preview-image');
+                if (existingImage) {
+                    existingImage.remove();
+                }
+                
+                // Clear text content
+                previewName.textContent = '';
+                previewSize.textContent = '';
+                
+                // Remove PDF class
+                preview.classList.remove('file-preview-pdf');
+            }
+        }
+    </script>
+    
+    <!-- External JavaScript file -->
+    <script src="~/js/quanlyhopdong-create.js"></script>
+}

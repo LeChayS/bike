@@ -1,0 +1,528 @@
+﻿@model bike.Models.HopDong
+@{
+    ViewData["Title"] = "Xử Lý Trả Xe";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var hasChiTiet = Model.ChiTietHopDong?.Any() == true;
+}
+
+<style>
+    .return-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px 0;
+    }
+
+    .return-header {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px 15px 0 0;
+        text-align: center;
+    }
+
+    .return-body {
+        background: white;
+        padding: 30px;
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .contract-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+    .info-label {
+        color: #666;
+        font-weight: 500;
+    }
+
+    .info-value {
+        color: #333;
+        font-weight: bold;
+    }
+
+    .calculation-section {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+    }
+
+    .calc-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .total-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .total-amount {
+        font-size: 36px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .btn-complete {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: bold;
+        width: 100%;
+    }
+
+    .overdue-warning {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .early-return-notice {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .form-disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    .cost-preview {
+        margin-top: 5px;
+        color: #17a2b8;
+        font-size: 13px;
+    }
+
+    .cost-preview i {
+        margin-right: 5px;
+    }
+</style>
+
+<div class="return-container">
+    <!-- Header -->
+    <div class="return-header">
+        <h2><i class="bi bi-arrow-return-left"></i> Xử Lý Trả Xe</h2>
+        <p class="mb-0">Hợp đồng: HD@(Model.MaHopDong.ToString("D6"))</p>
+    </div>
+
+    <!-- Body -->
+    <div class="return-body">
+        <!-- Thông tin hợp đồng -->
+        <h4 class="mb-3"><i class="bi bi-info-circle"></i> Thông tin hợp đồng</h4>
+        <div class="contract-info">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="info-row">
+                        <span class="info-label">Khách hàng:</span>
+                        <span class="info-value">@Model.HoTenKhach</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Số điện thoại:</span>
+                        <span class="info-value">@Model.SoDienThoai</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">CCCD:</span>
+                        <span class="info-value">@Model.SoCCCD</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-row">
+                        <span class="info-label">Ngày nhận xe:</span>
+                        <span class="info-value">@Model.NgayNhanXe.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Ngày trả dự kiến:</span>
+                        <span class="info-value">@Model.NgayTraXeDuKien.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Tiền cọc:</span>
+                        <span class="info-value text-success">@Model.TienCoc.ToString("N0")đ</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    @if (hasChiTiet)
+                    {
+                        var chiTietDau = Model.ChiTietHopDong.First();
+                        <div class="info-row">
+                            <span class="info-label">Xe:</span>
+                            <span class="info-value">@chiTietDau.Xe?.TenXe</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Biển số:</span>
+                            <span class="info-value">@chiTietDau.Xe?.BienSoXe</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Giá thuê/ngày:</span>
+                            <span class="info-value text-danger">@chiTietDau.GiaThueNgay.ToString("N0")đ</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-row">
+                            <span class="info-label">Xe:</span>
+                            <span class="info-value text-danger">Chưa có thông tin xe</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Cảnh báo trả trễ/sớm -->
+        @{
+            var ngayTraDuKien = Model.NgayTraXeDuKien.Date;
+            var ngayHienTai = DateTime.Now.Date;
+            var soNgayTre = (ngayHienTai - ngayTraDuKien).Days;
+            var soNgaySom = (ngayTraDuKien - ngayHienTai).Days;
+        }
+        @if (soNgayTre > 0)
+        {
+            <div class="overdue-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Lưu ý:</strong> Khách trả xe trễ @soNgayTre ngày so với hợp đồng!
+            </div>
+        }
+        else if (soNgaySom > 0)
+        {
+            <div class="early-return-notice">
+                <i class="bi bi-info-circle"></i>
+                <strong>Thông báo:</strong> Khách trả xe sớm @soNgaySom ngày so với hợp đồng.
+            </div>
+        }
+
+        @if (!hasChiTiet)
+        {
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <strong>Lỗi:</strong> Hợp đồng này không có thông tin xe thuê! Vui lòng kiểm tra lại dữ liệu.
+                <br><small>Form trả xe đã bị vô hiệu hóa cho đến khi có đầy đủ thông tin xe.</small>
+            </div>
+        }
+    
+        <!-- Form trả xe -->
+        <form asp-action="TraXe" method="post" class="@(!hasChiTiet ? "form-disabled" : "")">
+            <input type="hidden" name="id" value="@Model.MaHopDong" />
+
+            <h4 class="mb-3"><i class="bi bi-calendar-check"></i> Thông tin trả xe</h4>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Ngày nhận xe</label>
+                        <input type="date" class="form-control" value="@Model.NgayNhanXe.ToString("yyyy-MM-dd")" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Ngày trả xe dự kiến</label>
+                        <input type="date" class="form-control" value="@Model.NgayTraXeDuKien.ToString("yyyy-MM-dd")" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Ngày trả xe thực tế <span class="text-danger">*</span></label>
+                        <input type="date" name="ngayTraThucTe" class="form-control"
+                               value="@(Model.NgayTraXeThucTe?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd"))" 
+                               min="@Model.NgayNhanXe.ToString("yyyy-MM-dd")" required onchange="calculateFinal()" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tính toán -->
+            <div class="calculation-section">
+                <h5 class="mb-3">Tính toán chi phí</h5>
+                <div class="calc-row">
+                    <span>Số ngày thuê:</span>
+                    <span id="soNgayThue">0 ngày</span>
+                </div>
+                <div class="calc-row">
+                    <span>Tiền thuê xe (@(hasChiTiet ? Model.ChiTietHopDong.First().GiaThueNgay.ToString("N0") : "0")đ/ngày):</span>
+                    <span id="tienThueXe">0đ</span>
+                </div>
+                <div class="calc-row">
+                    <span>Tiền cọc đã thu:</span>
+                    <span>@Model.TienCoc.ToString("N0")đ</span>
+                </div>
+            </div>
+
+            <!-- Phụ phí -->
+            <div class="mb-3">
+                <label class="form-label">Phụ phí khác (nếu có)</label>
+                <input type="number" name="phuPhi" class="form-control cost-input" value="0"
+                       placeholder="Phụ phí khác: xăng, vệ sinh, phạt trả trễ..." 
+                       onchange="calculateFinal()" 
+                       oninput="formatOtherFeeDisplay()" id="otherFeeInput" />
+                <small class="text-muted">Ví dụ: nhập 50000 cho phí xăng</small>
+            </div>
+
+            <!-- Tình trạng xe -->
+            <div class="mb-3">
+                <label class="form-label">Tình trạng xe <span class="text-danger">*</span></label>
+                <select name="tinhTrangXe" class="form-control" required onchange="handleTinhTrangXeChange()" id="tinhTrangXeSelect">
+                    <option value="">-- Chọn tình trạng xe --</option>
+                    <option value="Bình thường">Bình thường</option>
+                    <option value="Có sự cố">Có sự cố</option>
+                </select>
+                <small class="text-muted">Chọn "Có sự cố" nếu xe bị hư hỏng hoặc có vấn đề</small>
+            </div>
+
+            <!-- Form thiệt hại (ẩn mặc định) -->
+            <div id="thietHaiForm" style="display: none;" class="mb-3">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Báo cáo thiệt hại</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Loại thiệt hại <span class="text-danger">*</span></label>
+                                    <select name="loaiThietHai" class="form-control" id="loaiThietHaiSelect">
+                                        <option value="">-- Chọn loại thiệt hại --</option>
+                                        <option value="Hư hỏng phụ kiện">Hư hỏng phụ kiện</option>
+                                        <option value="Hư hỏng thân xe">Hư hỏng thân xe</option>
+                                        <option value="Mất xe">Mất xe</option>
+                                        <option value="Khác">Khác</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Ngày xảy ra <span class="text-danger">*</span></label>
+                                    <input type="date" name="ngayXayRaThietHai" class="form-control" 
+                                           value="@DateTime.Now.ToString("yyyy-MM-dd")" id="ngayXayRaThietHai" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mô tả thiệt hại <span class="text-danger">*</span></label>
+                            <textarea name="moTaThietHai" class="form-control" rows="3" 
+                                      placeholder="Mô tả chi tiết thiệt hại..." id="moTaThietHaiText"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số tiền đền bù ước tính</label>
+                            <input type="number" name="chiPhiThietHai" class="form-control" value="0" 
+                                   placeholder="Số tiền đền bù ước tính..." id="chiPhiThietHai" />
+                            <small class="text-muted">Nhập 0 nếu chưa biết số tiền đền bù</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ghi chú -->
+            <div class="mb-3">
+                <label class="form-label">Ghi chú khi trả xe</label>
+                <textarea name="ghiChu" class="form-control" rows="3"
+                          placeholder="Ghi chú chung về quá trình trả xe..."></textarea>
+            </div>
+
+            <!-- Tổng tiền -->
+            <div class="total-section">
+                <h4>Tổng tiền thanh toán</h4>
+                <div class="total-amount" id="tongTienFinal">0đ</div>
+                <p class="mb-0">Đã bao gồm tiền thuê và phụ phí</p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn btn-complete flex-fill" @(!hasChiTiet ? "disabled" : "")>
+                    <i class="bi bi-check-circle"></i> Hoàn Tất Trả Xe
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Dữ liệu xe để tính toán
+        const vehicleData = [
+            @if (hasChiTiet && Model.ChiTietHopDong.Any())
+            {
+                @foreach (var chiTiet in Model.ChiTietHopDong.Select((ct, index) => new { ct, index }))
+                {
+                    @:{
+                        @:giaTriXe: @(chiTiet.ct.Xe?.GiaTriXe ?? 0),
+                        @:giaThueNgay: @chiTiet.ct.GiaThueNgay
+                    @:}@(chiTiet.index < Model.ChiTietHopDong.Count - 1 ? "," : "")
+                }
+            }
+        ];
+
+        // Format hiển thị phụ phí
+        function formatOtherFeeDisplay() {
+            const otherFeeInput = document.getElementById('otherFeeInput');
+            if (!otherFeeInput) return;
+            
+            let otherFeePreview = otherFeeInput.parentNode.querySelector('.cost-preview');
+            if (!otherFeePreview) {
+                otherFeePreview = document.createElement('small');
+                otherFeePreview.className = 'form-text cost-preview';
+                otherFeeInput.parentNode.appendChild(otherFeePreview);
+            }
+            
+            const value = parseInt(otherFeeInput.value) || 0;
+            if (value > 0) {
+                otherFeePreview.innerHTML = '<i class="bi bi-eye"></i> Hiển thị: ' + value.toLocaleString('vi-VN') + 'đ';
+            } else {
+                otherFeePreview.innerHTML = '';
+            }
+        }
+
+        function calculateFinal() {
+            try {
+                const ngayNhan = new Date('@Model.NgayNhanXe.ToString("yyyy-MM-dd")');
+                const ngayTraInput = document.querySelector('input[name="ngayTraThucTe"]').value;
+                const ngayTra = new Date(ngayTraInput);
+                const giaThue = @(hasChiTiet && Model.ChiTietHopDong.Any() ? Model.ChiTietHopDong.First().GiaThueNgay : 0);
+                const phuPhi = parseFloat(document.querySelector('input[name="phuPhi"]').value) || 0;
+
+            if (ngayTra) {
+                // Kiểm tra ngày trả xe thực tế có hợp lệ không
+                if (ngayTra < ngayNhan) {
+                    document.getElementById('soNgayThue').innerHTML = '0 ngày';
+                    document.getElementById('tienThueXe').innerHTML = '0đ';
+                    document.getElementById('tongTienFinal').innerHTML = '0đ';
+                    return;
+                }
+                // Tính số ngày thuê
+                let soNgay = Math.ceil((ngayTra - ngayNhan) / (1000 * 60 * 60 * 24));
+
+                // Nếu số ngày <= 0 (cùng ngày hoặc trả sớm hơn) thì tính 1 ngày
+                if (soNgay <= 0) {
+                    soNgay = 1;
+                }
+                
+                const tienThue = soNgay * giaThue;
+                const tongTien = tienThue + phuPhi;
+
+                document.getElementById('soNgayThue').innerHTML = soNgay + ' ngày';
+                document.getElementById('tienThueXe').innerHTML = tienThue.toLocaleString('vi-VN') + 'đ';
+                
+                document.getElementById('tongTienFinal').innerHTML = tongTien.toLocaleString('vi-VN') + 'đ';
+            }
+            } catch (error) {
+                console.error('Error in calculateFinal:', error);
+            }
+        }
+
+        // Xử lý thay đổi tình trạng xe
+        function handleTinhTrangXeChange() {
+            const tinhTrangXe = document.getElementById('tinhTrangXeSelect').value;
+            const thietHaiForm = document.getElementById('thietHaiForm');
+            
+            if (tinhTrangXe === 'Có sự cố') {
+                thietHaiForm.style.display = 'block';
+                // Đặt required cho các trường thiệt hại
+                document.getElementById('loaiThietHaiSelect').required = true;
+                document.getElementById('ngayXayRaThietHai').required = true;
+                document.getElementById('moTaThietHaiText').required = true;
+            } else {
+                thietHaiForm.style.display = 'none';
+                // Bỏ required cho các trường thiệt hại
+                document.getElementById('loaiThietHaiSelect').required = false;
+                document.getElementById('ngayXayRaThietHai').required = false;
+                document.getElementById('moTaThietHaiText').required = false;
+            }
+        }
+
+        // Khởi tạo khi load trang
+        $(document).ready(function() {
+            // Khởi tạo format display cho phụ phí
+            formatOtherFeeDisplay();
+            
+            calculateFinal();
+            
+            // Thêm event listener cho input ngày trả xe thực tế để tính toán real-time
+            $('input[name="ngayTraThucTe"]').on('change input', function() {
+                calculateFinal();
+            });
+            
+            // Validate form trước khi submit
+            $('form').on('submit', function(e) {
+                
+                // Kiểm tra có dữ liệu xe không
+                if (!@hasChiTiet.ToString().ToLower()) {
+                    e.preventDefault();
+                    alert('Không thể trả xe vì hợp đồng thiếu thông tin xe!');
+                    return false;
+                }
+                
+                // Kiểm tra ngày trả xe thực tế
+                const ngayTraThucTe = document.querySelector('input[name="ngayTraThucTe"]').value;
+                const ngayNhanXe = '@Model.NgayNhanXe.ToString("yyyy-MM-dd")';
+                
+                if (ngayTraThucTe < ngayNhanXe) {
+                    e.preventDefault();
+                    alert('Ngày trả xe thực tế không thể nhỏ hơn ngày nhận xe!');
+                    return false;
+                }
+                
+                // Kiểm tra tình trạng xe
+                const tinhTrangXe = document.getElementById('tinhTrangXeSelect').value;
+                if (!tinhTrangXe) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn tình trạng xe!');
+                    return false;
+                }
+                
+                // Kiểm tra thông tin thiệt hại nếu có sự cố
+                if (tinhTrangXe === 'Có sự cố') {
+                    const loaiThietHai = document.getElementById('loaiThietHaiSelect').value;
+                    const moTaThietHai = document.getElementById('moTaThietHaiText').value;
+                    
+                    if (!loaiThietHai || !moTaThietHai.trim()) {
+                        e.preventDefault();
+                        alert('Vui lòng điền đầy đủ thông tin thiệt hại!');
+                        return false;
+                    }
+                }
+                
+                const confirmed = confirm('Xác nhận hoàn tất trả xe?');
+                if (confirmed) {
+                    // Hiển thị loading state
+                    const submitBtn = $(this).find('button[type="submit"]');
+                    const originalText = submitBtn.html();
+                    submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');
+                    
+                    // Nếu có lỗi, sẽ restore button trong 10 giây
+                    setTimeout(function() {
+                        submitBtn.prop('disabled', false).html(originalText);
+                    }, 10000);
+                }
+                return confirmed;
+            });
+        });
+    </script>
+}

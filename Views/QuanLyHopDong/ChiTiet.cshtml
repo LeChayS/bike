@@ -1,0 +1,1119 @@
+﻿@model bike.Models.HopDong
+@{
+    ViewData["Title"] = $"Chi tiết hợp đồng HD{Model.MaHopDong:D6}";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Color Palette - Maximum 3 main colors */
+    :root {
+        --primary: #2563eb;      /* Blue - Main brand color */
+        --secondary: #6b7280;    /* Gray - Supporting color */
+        --white: #ffffff;        /* White - Background */
+        --light-gray: #f9fafb;   /* Light gray - Subtle backgrounds */
+        --border: #e5e7eb;       /* Border color */
+        --text-primary: #111827; /* Primary text */
+        --text-secondary: #6b7280; /* Secondary text */
+        --success: #059669;      /* Success green */
+        --warning: #d97706;      /* Warning orange */
+        --danger: #dc2626;       /* Danger red */
+    }
+
+    .detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .contract-card {
+        background: var(--white);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border);
+    }
+
+    .contract-header {
+        background: var(--primary);
+        color: var(--white);
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .contract-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.025em;
+    }
+
+    .contract-status {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 9999px;
+        margin-top: 0.75rem;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+    }
+
+    .contract-body {
+        padding: 2rem;
+    }
+
+    .section-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 2rem 0;
+    }
+
+    .info-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--primary);
+    }
+
+    /* Info rows */
+    .info-row {
+        display: flex;
+        background: var(--light-gray);
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+    .info-label {
+        background: var(--secondary);
+        color: var(--white);
+        padding: 1rem 1.25rem;
+        font-weight: 500;
+        min-width: 160px;
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+    }
+
+    .info-value {
+        padding: 1rem 1.25rem;
+        flex: 1;
+        font-size: 1rem;
+        color: var(--text-primary);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Vehicle cards */
+    .vehicle-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .vehicle-header {
+        background: var(--primary);
+        color: var(--white);
+        padding: 1rem 1.25rem;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .vehicle-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .vehicle-body {
+        padding: 1.5rem;
+    }
+
+    .vehicle-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .vehicle-info-item {
+        background: var(--light-gray);
+        padding: 1rem;
+        border-radius: 6px;
+        border-left: 3px solid var(--primary);
+    }
+
+    .vehicle-info-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .vehicle-info-value {
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    /* Status badges */
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .status-renting {
+        background: var(--warning);
+        color: var(--white);
+    }
+
+    .status-completed {
+        background: var(--success);
+        color: var(--white);
+    }
+
+    /* Financial section */
+    .financial-summary {
+        background: var(--primary);
+        color: var(--white);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 1.5rem;
+    }
+
+    .financial-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .financial-row:last-child {
+        border-bottom: none;
+    }
+
+    .financial-total {
+        font-size: 1.5rem;
+        font-weight: 700;
+        border-top: 2px solid rgba(255, 255, 255, 0.3);
+        padding-top: 1rem;
+        margin-top: 1rem;
+    }
+
+    /* Action buttons */
+    .action-section {
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-print {
+        background: var(--secondary);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-print:hover {
+        background: #4b5563;
+        color: var(--white);
+    }
+
+    .btn-return {
+        background: var(--success);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-return:hover {
+        background: #047857;
+        color: var(--white);
+    }
+
+    /* Time info */
+    .time-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .time-item {
+        text-align: center;
+        padding: 0.75rem;
+        background: var(--light-gray);
+        border-radius: 6px;
+        border: 1px solid var(--border);
+    }
+
+    .time-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+    }
+
+    .time-value {
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    /* Notes section */
+    .notes-section {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--light-gray);
+        border-radius: 6px;
+        border-left: 3px solid var(--secondary);
+    }
+
+    .notes-text {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .info-row {
+            flex-direction: column;
+        }
+        
+        .info-label {
+            min-width: auto;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .vehicle-info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-section {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-info {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Document cards */
+    .document-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.2s;
+    }
+
+    .document-card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .document-header {
+        background: var(--primary);
+        color: var(--white);
+        padding: 0.75rem 1rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .document-body {
+        padding: 1rem;
+    }
+
+    .document-preview {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .document-image {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .document-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .document-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .document-actions .btn {
+        flex: 1;
+        max-width: 120px;
+    }
+
+    /* Document preview modal */
+    .document-modal .modal-dialog {
+        max-width: 90%;
+        max-height: 90vh;
+    }
+
+    .document-modal .modal-body {
+        text-align: center;
+        padding: 0;
+    }
+
+    .document-modal img {
+        max-width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+    }
+
+    /* Print styles */
+    @@media print {
+        .no-print {
+            display: none;
+        }
+
+        .contract-card {
+            box-shadow: none;
+        }
+    }
+</style>
+<div class="detail-container">
+    <div class="contract-card">
+        <!-- Header -->
+        <div class="contract-header">
+            <div class="contract-number">
+                <i class="bi bi-file-earmark-text"></i> HD@(Model.MaHopDong.ToString("D6"))
+            </div>
+            <div class="contract-status">
+                @Model.TrangThai
+            </div>
+            <p class="mb-0 mt-3">Ngày tạo: @Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
+
+        <!-- Body -->
+        <div class="contract-body">
+            <!-- Thông tin khách hàng -->
+            <div class="info-section">
+                <h3 class="section-title">
+                    <i class="bi bi-person-fill"></i> Thông tin khách hàng
+                </h3>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-row">
+                            <div class="info-label">Họ và tên</div>
+                            <div class="info-value">@Model.HoTenKhach</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-row">
+                            <div class="info-label">Số điện thoại</div>
+                            <div class="info-value">@Model.SoDienThoai</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-row">
+                            <div class="info-label">CCCD/CMND</div>
+                            <div class="info-value">@Model.SoCCCD</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-row">
+                            <div class="info-label">Địa chỉ</div>
+                            <div class="info-value">@(Model.DiaChi ?? "Không có")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Giấy tờ đính kèm -->
+            @{
+                var hasDocuments = !string.IsNullOrEmpty(Model.CccdMatTruoc) || 
+                                   !string.IsNullOrEmpty(Model.CccdMatSau) || 
+                                   !string.IsNullOrEmpty(Model.BangLaiXe) || 
+                                   !string.IsNullOrEmpty(Model.GiayToKhac);
+            }
+    
+            @if (hasDocuments)
+            {
+                <div class="section-divider"></div>
+                
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-file-earmark-text"></i> Giấy tờ đính kèm
+                    </h3>
+                    
+                    <div class="row">
+                        @if (!string.IsNullOrEmpty(Model.CccdMatTruoc))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="document-card">
+                                    <div class="document-header">
+                                        <i class="bi bi-card-image"></i> CCCD/CMND - Mặt trước
+                                    </div>
+                                    <div class="document-body">
+                                        <div class="document-preview">
+                                            <img src="~/uploads/hopdong/@Model.CccdMatTruoc" alt="CCCD mặt trước" 
+                                                 class="document-image" onclick="previewDocument('~/uploads/hopdong/@Model.CccdMatTruoc', 'CCCD/CMND - Mặt trước')" 
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                                            <div style="display: none; text-align: center; color: #dc3545; padding: 20px;">
+                                                <i class="bi bi-exclamation-triangle"></i> Không thể tải hình ảnh<br/>
+                                                <small>File: @Model.CccdMatTruoc</small>
+                                            </div>
+                                        </div>
+                                        <div class="document-actions">
+                                            <a href="~/uploads/hopdong/@Model.CccdMatTruoc" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-eye"></i> Xem
+                                            </a>
+                                            <a href="~/uploads/hopdong/@Model.CccdMatTruoc" download class="btn btn-secondary btn-sm">
+                                                <i class="bi bi-download"></i> Tải về
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.CccdMatSau))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="document-card">
+                                    <div class="document-header">
+                                        <i class="bi bi-card-image"></i> CCCD/CMND - Mặt sau
+                                    </div>
+                                    <div class="document-body">
+                                        <div class="document-preview">
+                                            <img src="~/uploads/hopdong/@Model.CccdMatSau" alt="CCCD mặt sau" 
+                                                 class="document-image" onclick="previewDocument('~/uploads/hopdong/@Model.CccdMatSau', 'CCCD/CMND - Mặt sau')" 
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                                            <div style="display: none; text-align: center; color: #dc3545; padding: 20px;">
+                                                <i class="bi bi-exclamation-triangle"></i> Không thể tải hình ảnh<br/>
+                                                <small>File: @Model.CccdMatSau</small>
+                                            </div>
+                                        </div>
+                                        <div class="document-actions">
+                                            <a href="~/uploads/hopdong/@Model.CccdMatSau" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-eye"></i> Xem
+                                            </a>
+                                            <a href="~/uploads/hopdong/@Model.CccdMatSau" download class="btn btn-secondary btn-sm">
+                                                <i class="bi bi-download"></i> Tải về
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.BangLaiXe))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="document-card">
+                                    <div class="document-header">
+                                        <i class="bi bi-card-image"></i> Bằng lái xe
+                                    </div>
+                                    <div class="document-body">
+                                        <div class="document-preview">
+                                            <img src="~/uploads/hopdong/@Model.BangLaiXe" alt="Bằng lái xe" 
+                                                 class="document-image" onclick="previewDocument('~/uploads/hopdong/@Model.BangLaiXe', 'Bằng lái xe')" 
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                                            <div style="display: none; text-align: center; color: #dc3545; padding: 20px;">
+                                                <i class="bi bi-exclamation-triangle"></i> Không thể tải hình ảnh<br/>
+                                                <small>File: @Model.BangLaiXe</small>
+                                            </div>
+                                        </div>
+                                        <div class="document-actions">
+                                            <a href="~/uploads/hopdong/@Model.BangLaiXe" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-eye"></i> Xem
+                                            </a>
+                                            <a href="~/uploads/hopdong/@Model.BangLaiXe" download class="btn btn-secondary btn-sm">
+                                                <i class="bi bi-download"></i> Tải về
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.GiayToKhac))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="document-card">
+                                    <div class="document-header">
+                                        <i class="bi bi-file-earmark"></i> Giấy tờ khác
+                                    </div>
+                                    <div class="document-body">
+                                        <div class="document-preview">
+                                            <img src="~/uploads/hopdong/@Model.GiayToKhac" alt="Giấy tờ khác" 
+                                                 class="document-image" onclick="previewDocument('~/uploads/hopdong/@Model.GiayToKhac', 'Giấy tờ khác')" 
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                                            <div style="display: none; text-align: center; color: #dc3545; padding: 20px;">
+                                                <i class="bi bi-exclamation-triangle"></i> Không thể tải hình ảnh<br/>
+                                                <small>File: @Model.GiayToKhac</small>
+                                            </div>
+                                        </div>
+                                        <div class="document-actions">
+                                            <a href="~/uploads/hopdong/@Model.GiayToKhac" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-eye"></i> Xem
+                                            </a>
+                                            <a href="~/uploads/hopdong/@Model.GiayToKhac" download class="btn btn-secondary btn-sm">
+                                                <i class="bi bi-download"></i> Tải về
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="section-divider"></div>
+
+            <!-- Thông tin xe -->
+            <div class="info-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="section-title mb-0">
+                        <i class="bi bi-bicycle"></i> Danh sách xe thuê (@(Model.ChiTietHopDong?.Count() ?? 0) xe)
+                    </h3>
+                    <div>
+                        @if (Model.TrangThai == "Đang thuê")
+                        {
+                            <a asp-controller="ChiTietHopDong" asp-action="ThemXe" asp-route-hopDongId="@Model.MaHopDong" 
+                               class="btn btn-success btn-sm">
+                                <i class="bi bi-plus-circle"></i> Thêm xe
+                            </a>
+                        }
+                    </div>
+                </div>
+                
+                @if (Model.ChiTietHopDong?.Any() == true)
+                {
+                    foreach (var chiTiet in Model.ChiTietHopDong)
+                    {
+                        <div class="vehicle-card">
+                            <div class="vehicle-header">
+                                <div>
+                                    <i class="bi bi-bicycle"></i> @chiTiet.Xe?.TenXe - @chiTiet.Xe?.BienSoXe
+                                </div>
+                                @if (Model.TrangThai == "Đang thuê")
+                                {
+                                    <div class="vehicle-actions">
+                                        <a asp-controller="ChiTietHopDong" asp-action="SuaXe" asp-route-id="@chiTiet.MaChiTiet" 
+                                           class="btn btn-warning btn-sm" title="Sửa thông tin xe">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-sm" 
+                                                onclick="confirmDeleteVehicle(@chiTiet.MaChiTiet, '@chiTiet.Xe?.TenXe')" 
+                                                title="Xóa xe khỏi hợp đồng">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="vehicle-body">
+                                <div class="vehicle-info-grid">
+                                    <div class="vehicle-info-item">
+                                        <div class="vehicle-info-label">Hãng xe</div>
+                                        <div class="vehicle-info-value">@chiTiet.Xe?.HangXe @chiTiet.Xe?.DongXe</div>
+                                    </div>
+                                    <div class="vehicle-info-item">
+                                        <div class="vehicle-info-label">Giá thuê/ngày</div>
+                                        <div class="vehicle-info-value">@chiTiet.GiaThueNgay.ToString("N0")đ</div>
+                                    </div>
+                                    <div class="vehicle-info-item">
+                                        <div class="vehicle-info-label">Số ngày thuê</div>
+                                        <div class="vehicle-info-value">@chiTiet.SoNgayThue ngày</div>
+                                    </div>
+                                    <div class="vehicle-info-item">
+                                        <div class="vehicle-info-label">Thành tiền</div>
+                                        <div class="vehicle-info-value">@chiTiet.ThanhTien.ToString("N0")đ</div>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(chiTiet.TinhTrangTraXe))
+                                    {
+                                        <div class="vehicle-info-item">
+                                            <div class="vehicle-info-label">Tình trạng trả xe</div>
+                                            <div class="vehicle-info-value">
+                                                <span class="status-badge @(chiTiet.TinhTrangTraXe == "Bình thường" ? "status-completed" : "status-renting")">
+                                                    @chiTiet.TinhTrangTraXe
+                                                </span>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <!-- Thông tin thời gian -->
+                                <div class="time-info">
+                                    <div class="time-item">
+                                        <div class="time-label">
+                                            <i class="bi bi-calendar-check"></i> Ngày nhận
+                                        </div>
+                                        <div class="time-value">@chiTiet.NgayNhanXe.ToString("dd/MM/yyyy")</div>
+                                    </div>
+                                    <div class="time-item">
+                                        <div class="time-label">
+                                            <i class="bi bi-calendar-x"></i> Ngày trả dự kiến
+                                        </div>
+                                        <div class="time-value">@chiTiet.NgayTraXeDuKien.ToString("dd/MM/yyyy")</div>
+                                    </div>
+                                    <div class="time-item">
+                                        <div class="time-label">
+                                            <i class="bi bi-clock"></i> Trạng thái
+                                        </div>
+                                        <div class="time-value">
+                                            @if (chiTiet.NgayTraXeThucTe.HasValue)
+                                            {
+                                                <span class="text-success">Đã trả: @chiTiet.NgayTraXeThucTe.Value.ToString("dd/MM/yyyy")</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-warning">Chưa trả</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Ghi chú -->
+                                @if (!string.IsNullOrEmpty(chiTiet.GhiChu))
+                                {
+                                    <div class="notes-section">
+                                        <div class="notes-text">
+                                            <i class="bi bi-chat-text"></i> <strong>Ghi chú:</strong> @chiTiet.GhiChu
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Chưa có thông tin xe
+                    </div>
+                }
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Thời gian thuê -->
+            <div class="info-section">
+                <h3 class="section-title">
+                    <i class="bi bi-calendar-range"></i> Thời gian thuê
+                </h3>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-row">
+                            <div class="info-label">Ngày nhận xe</div>
+                            <div class="info-value">@Model.NgayNhanXe.ToString("dd/MM/yyyy")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-row">
+                            <div class="info-label">Ngày trả xe dự kiến</div>
+                            <div class="info-value">@Model.NgayTraXeDuKien.ToString("dd/MM/yyyy")</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    @if (Model.NgayTraXeThucTe.HasValue)
+                    {
+                        <div class="col-md-6">
+                            <div class="info-row">
+                                <div class="info-label">Ngày trả xe thực tế</div>
+                                <div class="info-value">@Model.NgayTraXeThucTe.Value.ToString("dd/MM/yyyy")</div>
+                            </div>
+                        </div>
+                    }
+                    <div class="col-md-6">
+                        <div class="info-row">
+                            <div class="info-label">Tổng số ngày thuê</div>
+                            <div class="info-value">
+                                @if (Model.NgayTraXeThucTe.HasValue)
+                                {
+                                    @((Model.NgayTraXeThucTe.Value - Model.NgayNhanXe).Days + 1) <text>ngày</text>
+                                }
+                                else
+                                {
+                                    @((Model.NgayTraXeDuKien - Model.NgayNhanXe).Days + 1) <text>ngày (dự kiến)</text>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Thông tin tài chính -->
+            <div class="info-section">
+                <h3 class="section-title">
+                    <i class="bi bi-cash-stack"></i> Thông tin tài chính
+                </h3>
+                
+                <div class="financial-summary">
+                    @if (Model.ChiTietHopDong?.Any() == true)
+                    {
+                        var tongTienThueXe = Model.ChiTietHopDong.Sum(ct => ct.ThanhTien);
+                        <div class="financial-row">
+                            <span><i class="bi bi-bicycle"></i> Tiền thuê xe:</span>
+                            <span>@tongTienThueXe.ToString("N0")đ</span>
+                        </div>
+                    }
+                    <div class="financial-row">
+                        <span><i class="bi bi-shield-check"></i> Tiền cọc:</span>
+                        <span>@Model.TienCoc.ToString("N0")đ</span>
+                    </div>
+                    @if (Model.PhuPhi > 0)
+                    {
+                        <div class="financial-row">
+                            <span><i class="bi bi-plus-circle"></i> Phụ phí:</span>
+                            <span>@Model.PhuPhi.ToString("N0")đ</span>
+                        </div>
+                    }
+                    <div class="financial-row financial-total">
+                        <span><i class="bi bi-calculator"></i> Tổng cộng:</span>
+                        <span>@Model.TongTien.ToString("N0")đ</span>
+                    </div>
+                </div>
+
+                <!-- Tổng tiền khách đã trả (bao gồm phí đền bù) -->
+                <div class="mt-3" id="tongTienKhachDaTraSection" style="display: none;">
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-calculator"></i> Tổng tiền khách đã trả</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>Tiền thuê xe:</strong> <span id="tienThueXeDisplay">0đ</span>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Phí đền bù:</strong> <span id="phiDenBuDisplay">0đ</span>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Tổng cộng:</strong> <span id="tongTienKhachDaTraDisplay" class="text-success fw-bold">0đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông tin hóa đơn -->
+                @if (Model.HoaDon != null)
+                {
+                    <div class="alert alert-success mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-check-circle-fill"></i>
+                                <strong>Đã có hóa đơn:</strong> HD@(Model.HoaDon.MaHoaDon.ToString("D6"))
+                                <br />
+                                <small>Ngày tạo: @Model.HoaDon.NgayTao.ToString("dd/MM/yyyy HH:mm")</small>
+                            </div>
+                            <a asp-controller="QuanLyHoaDon" asp-action="ChiTiet" asp-route-id="@Model.HoaDon.MaHoaDon" 
+                               class="btn btn-success btn-sm">
+                                <i class="bi bi-receipt"></i> Xem hóa đơn
+                            </a>
+                        </div>
+                    </div>
+                }
+                else if (Model.TrangThai == "Hoàn thành")
+                {
+                    <div class="alert alert-warning mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <strong>Chưa có hóa đơn</strong>
+                                <br />
+                                <small>Hợp đồng đã hoàn thành nhưng chưa tạo hóa đơn thanh toán (có thể do hệ thống cũ hoặc lỗi kỹ thuật)</small>
+                            </div>
+                            <button class="btn btn-warning btn-sm" onclick="taoHoaDonNhanh(@Model.MaHopDong)">
+                                <i class="bi bi-plus-circle"></i> Tạo hóa đơn thủ công
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+                         <!-- Action buttons -->
+             <div class="action-section no-print">
+                <a href="@Url.Action("InHopDongA4", new { id = Model.MaHopDong })" target="_blank" class="btn btn-print">
+                    <i class="bi bi-printer"></i> In hợp đồng
+                </a>
+                @if (Model.TrangThai == "Đang thuê" && !Context.Request.Query.ContainsKey("newlyCreated"))
+                {
+                    <a asp-action="TraXe" asp-route-id="@Model.MaHopDong" class="btn btn-return">
+                        <i class="bi bi-check-circle"></i> Xử lý trả xe
+                    </a>
+                }
+                @if (Model.HoaDon != null)
+                {
+                    <a asp-controller="QuanLyHoaDon" asp-action="ChiTiet" asp-route-id="@Model.HoaDon.MaHoaDon" 
+                       class="btn btn-success">
+                        <i class="bi bi-receipt"></i> Xem hóa đơn
+                    </a>
+                }
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Form xóa xe -->
+<form id="deleteVehicleForm" method="post" style="display: none;" action="">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="" />
+</form>
+
+<!-- Modal tạo hóa đơn nhanh -->
+<div class="modal fade" id="taoHoaDonNhanhModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tạo hóa đơn thanh toán</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Xác nhận tạo hóa đơn cho hợp đồng HD@(Model.MaHopDong.ToString("D6"))</strong><br />
+                    Khách hàng: @Model.HoTenKhach<br />
+                    Số tiền: @Model.TongTien.ToString("N0")đ<br />
+                    Hóa đơn sẽ được tạo với trạng thái "Đã thanh toán"
+                </div>
+
+                <form id="taoHoaDonNhanhForm">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú cho hóa đơn (tùy chọn)</label>
+                        <textarea id="ghiChuHoaDonNhanh" class="form-control" rows="3"
+                                  placeholder="Ghi chú thêm cho hóa đơn..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-success" onclick="xacNhanTaoHoaDonNhanh()">
+                    <i class="bi bi-check-circle"></i> Xác nhận tạo
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xem giấy tờ -->
+<div class="modal fade document-modal" id="documentPreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentModalTitle">Xem giấy tờ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <img id="documentModalImage" src="" alt="Document preview" />
+            </div>
+            <div class="modal-footer">
+                <a id="documentModalDownload" href="" download class="btn btn-primary">
+                    <i class="bi bi-download"></i> Tải về
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Print formatting
+        window.addEventListener('beforeprint', function() {
+            document.body.style.padding = '0';
+            document.querySelector('.container-fluid').style.maxWidth = '100%';
+        });
+
+        window.addEventListener('afterprint', function() {
+            document.body.style.padding = '';
+            document.querySelector('.container-fluid').style.maxWidth = '';
+        });
+
+        // Function xóa xe khỏi hợp đồng
+        function confirmDeleteVehicle(maChiTiet, tenXe) {
+            if (confirm(`Bạn có chắc muốn xóa xe "${tenXe}" khỏi hợp đồng?\n\nLưu ý: Thao tác này không thể hoàn tác!`)) {
+                const form = document.getElementById('deleteVehicleForm');
+                form.action = '@Url.Action("XoaXe", "ChiTietHopDong")';
+                form.querySelector('input[name="id"]').value = maChiTiet;
+                form.submit();
+            }
+        }
+        // Thêm function tạo hóa đơn nhanh
+        function taoHoaDonNhanh(maHopDong) {
+            console.log('Tao hoa don nhanh:', maHopDong);
+            
+            // Reset form
+            $('#ghiChuHoaDonNhanh').val('');
+            
+            // Hiển thị modal
+            var myModal = new bootstrap.Modal(document.getElementById('taoHoaDonNhanhModal'));
+            myModal.show();
+        }
+        function xacNhanTaoHoaDonNhanh() {
+            var maHopDong = @Model.MaHopDong;
+            var ghiChu = $('#ghiChuHoaDonNhanh').val();
+
+            // Hiển thị loading
+            var btn = $('.modal-footer .btn-success');
+            var originalText = btn.html();
+            btn.html('<span class="spinner-border spinner-border-sm"></span> Đang tạo...').prop('disabled', true);
+            $.ajax({
+                url: '@Url.Action("TaoHoaDon", "QuanLyHoaDon")',
+                type: 'POST',
+                data: {
+                    maHopDong: maHopDong,
+                    ghiChu: ghiChu,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Hiển thị thông báo thành công
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message);
+                        } else {
+                            alert(response.message);
+                        }
+                        // Reload trang để hiển thị thông tin hóa đơn
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.message);
+                        } else {
+                            alert('Lỗi: ' + response.message);
+                        }
+                        btn.html(originalText).prop('disabled', false);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var errorMsg = 'Có lỗi xảy ra: ' + error;
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(errorMsg);
+                    } else {
+                        alert(errorMsg);
+                    }
+                    btn.html(originalText).prop('disabled', false);
+                },
+                complete: function() {
+                    bootstrap.Modal.getInstance(document.getElementById('taoHoaDonNhanhModal')).hide();
+                }
+            });
+        }
+
+        // Function để load tổng tiền khách đã trả
+        function loadTongTienKhachDaTra() {
+            const maHopDong = @Model.MaHopDong;
+            
+            $.ajax({
+                url: '@Url.Action("GetTongTienKhachDaTra", "QuanLyThietHai")',
+                type: 'GET',
+                data: { maHopDong: maHopDong },
+                success: function(response) {
+                    if (response.success) {
+                        const data = response.data;
+                        const tienThueXe = data.TienThueXe;
+                        const phiDenBuDaTra = data.TongPhiDenBuDaTra;
+                        const tongTienKhachDaTra = data.TongTienKhachDaTra;
+
+                        // Hiển thị thông tin
+                        $('#tienThueXeDisplay').text(tienThueXe.toLocaleString('vi-VN') + 'đ');
+                        $('#phiDenBuDisplay').text(phiDenBuDaTra.toLocaleString('vi-VN') + 'đ');
+                        $('#tongTienKhachDaTraDisplay').text(tongTienKhachDaTra.toLocaleString('vi-VN') + 'đ');
+
+                        // Hiển thị section nếu có phí đền bù
+                        if (phiDenBuDaTra > 0) {
+                            $('#tongTienKhachDaTraSection').show();
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading payment info:', error);
+                }
+            });
+        }
+
+        // Function xem giấy tờ
+        function previewDocument(imageSrc, title) {
+            // Cập nhật modal title
+            document.getElementById('documentModalTitle').textContent = title;
+            
+            // Cập nhật image src
+            document.getElementById('documentModalImage').src = imageSrc;
+            
+            // Cập nhật download link
+            document.getElementById('documentModalDownload').href = imageSrc;
+            
+            // Hiển thị modal
+            var modal = new bootstrap.Modal(document.getElementById('documentPreviewModal'));
+            modal.show();
+        }
+
+        // Load thông tin khi trang load
+        $(document).ready(function() {
+            loadTongTienKhachDaTra();
+            
+            // Debug: Check image loading
+            $('.document-image').each(function() {
+                var img = $(this);
+                var src = img.attr('src');
+                console.log('Checking image:', src);
+                
+                img.on('error', function() {
+                    console.error('Failed to load image:', src);
+                });
+                
+                img.on('load', function() {
+                    console.log('Successfully loaded image:', src);
+                });
+            });
+        });
+    </script>
+}

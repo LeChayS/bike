@@ -1,0 +1,720 @@
+﻿@model IEnumerable<bike.Models.Xe>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Quản Lý Xe";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/xe-index.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
+    <link rel="stylesheet" href="~/css/custom-modal.css" />
+    <link rel="stylesheet" href="~/css/xe-details-modal.css" />
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Quản Lý Xe</h1>
+        <div class="d-flex gap-2">
+            @if (ViewBag.ShowDeleted == true)
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-eye"></i> Xem xe hoạt động
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" asp-route-showDeleted="true" class="btn btn-outline-warning">
+                    <i class="bi bi-trash"></i> Xem xe đã xóa
+                </a>
+            }
+            <a asp-action="Create" class="btn btn-add">
+                <i class="bi bi-plus-circle"></i> Thêm Xe Mới
+            </a>
+        </div>
+    </div>
+
+    <!-- Thống kê -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.TongSoXe</div>
+                <div>Tổng số xe</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.XeSanSang</div>
+                <div>Xe sẵn sàng</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.DangChoThue</div>
+                <div>Đang cho thuê</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.BaoTri</div>
+                <div>Bảo trì</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bộ lọc -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <input type="text" id="searchString" class="form-control" placeholder="Tìm kiếm xe..." value="@ViewBag.CurrentSearchString" />
+        </div>
+        <div class="col-md-2">
+            <select id="loaiXe" class="form-select">
+                <option value="">Loại xe</option>
+                @foreach (var item in ViewBag.LoaiXeList as SelectList)
+                {
+                    if (item.Value == ViewBag.CurrentLoaiXe?.ToString())
+                    {
+                        <option value="@item.Value" selected>@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select id="hangXe" class="form-select">
+                <option value="">Hãng xe</option>
+                @foreach (var item in ViewBag.HangXeList as SelectList)
+                {
+                    if (item.Value == ViewBag.CurrentHangXe?.ToString())
+                    {
+                        <option value="@item.Value" selected>@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select id="trangThai" class="form-select">
+                <option value="">Trạng thái xe</option>
+                @foreach (var item in ViewBag.TrangThaiList as SelectList)
+                {
+                    if (item.Value == ViewBag.CurrentTrangThai?.ToString())
+                    {
+                        <option value="@item.Value" selected>@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="button" id="filterBtn" class="btn btn-secondary">
+                <i class="bi bi-funnel"></i> Lọc
+            </button>
+            <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary" style="display: none;">
+                <i class="bi bi-x-circle"></i> Xóa lọc
+            </button>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Danh sách xe</h5>
+        </div>
+        <div class="card-body" id="xeTableContainer">
+            @Html.Partial("_XeTablePartial", Model)
+        </div>
+    </div>
+</div>
+
+<!-- Xe Details Modal -->
+<div class="xe-details-modal-overlay" id="xeDetailsModal">
+    <div class="xe-details-modal">
+        <div class="xe-details-modal-header">
+            <h3 class="xe-details-modal-title">
+                <i class="bi bi-car-front"></i>
+                <span id="modalTitle">Chi tiết xe</span>
+            </h3>
+            <button type="button" class="xe-details-modal-close" onclick="closeXeDetailsModal()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="xe-details-modal-body">
+            <div class="xe-details-loading" id="xeDetailsLoading">
+                <div class="spinner"></div>
+                <p>Đang tải thông tin xe...</p>
+            </div>
+            <div class="xe-details-content" id="xeDetailsContent" style="display: none;">
+                <div class="xe-details-left">
+                    <!-- Image Section -->
+                    <div class="xe-details-image-section">
+                        <div id="xeImageContainer">
+                            <!-- Image will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Basic Info -->
+                    <div class="xe-details-info-card">
+                        <h4><i class="bi bi-info-circle"></i> Thông tin cơ bản</h4>
+                        <div class="xe-details-info-grid">
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Mã xe</span>
+                                <span class="xe-details-info-value" id="xeMaXe">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Tên xe</span>
+                                <span class="xe-details-info-value" id="xeTenXe">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Biển số</span>
+                                <span class="xe-details-info-value" id="xeBienSo">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Hãng xe</span>
+                                <span class="xe-details-info-value" id="xeHangXe">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Dòng xe</span>
+                                <span class="xe-details-info-value" id="xeDongXe">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Loại xe</span>
+                                <span class="xe-details-info-value" id="xeLoaiXe">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Info -->
+                    <div class="xe-details-info-card">
+                        <h4><i class="bi bi-currency-dollar"></i> Thông tin tài chính</h4>
+                        <div class="xe-details-info-grid">
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Giá thuê/ngày</span>
+                                <span class="xe-details-info-value" id="xeGiaThue">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Giá trị xe</span>
+                                <span class="xe-details-info-value" id="xeGiaTriXe">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Tổng chi phí</span>
+                                <span class="xe-details-info-value" id="xeTongChiPhi">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Chi phí sửa chữa</span>
+                                <span class="xe-details-info-value" id="xeChiPhiSuaChua">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="xe-details-right">
+                    <!-- Status -->
+                    <div class="xe-details-info-card">
+                        <h4><i class="bi bi-flag"></i> Trạng thái</h4>
+                        <div id="xeTrangThaiContainer">
+                            <!-- Status badge will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="xe-details-info-card">
+                        <h4><i class="bi bi-graph-up"></i> Thống kê</h4>
+                        <div class="xe-details-stats">
+                            <div class="xe-details-stat-item">
+                                <div class="xe-details-stat-number" id="xeSoHopDong">0</div>
+                                <div class="xe-details-stat-label">Hợp đồng</div>
+                            </div>
+                            <div class="xe-details-stat-item">
+                                <div class="xe-details-stat-number" id="xeSoHinhAnh">0</div>
+                                <div class="xe-details-stat-label">Hình ảnh</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Incident Info (if any) -->
+                    <div class="xe-details-info-card" id="xeSuCoCard" style="display: none;">
+                        <h4><i class="bi bi-exclamation-triangle"></i> Thông tin sự cố</h4>
+                        <div class="xe-details-info-grid">
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Ngày gặp sự cố</span>
+                                <span class="xe-details-info-value" id="xeNgaySuCo">-</span>
+                            </div>
+                            <div class="xe-details-info-item">
+                                <span class="xe-details-info-label">Mô tả thiệt hại</span>
+                                <span class="xe-details-info-value" id="xeMoTaThietHai">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Contract History Section -->
+            <div class="xe-details-contract-history" id="xeContractHistory" style="display: none;">
+                <div class="xe-details-contract-header">
+                    <h4 class="xe-details-contract-title">
+                        <i class="bi bi-clock-history"></i>
+                        Lịch sử hợp đồng
+                    </h4>
+                    <button type="button" class="btn btn-primary btn-sm" id="btnViewContractHistory" onclick="viewContractHistory()">
+                        <i class="bi bi-arrow-right"></i>
+                        Xem chi tiết lịch sử
+                    </button>
+                </div>
+                <!-- Contract Statistics -->
+                <div class="xe-details-contract-stats" id="xeContractStats">
+                    <div class="xe-details-contract-stat">
+                        <div class="xe-details-contract-stat-number" id="xeTongHopDong">0</div>
+                        <div class="xe-details-contract-stat-label">Tổng hợp đồng</div>
+                    </div>
+                    <div class="xe-details-contract-stat">
+                        <div class="xe-details-contract-stat-number" id="xeDaHoanThanh">0</div>
+                        <div class="xe-details-contract-stat-label">Đã hoàn thành</div>
+                    </div>
+                    <div class="xe-details-contract-stat">
+                        <div class="xe-details-contract-stat-number" id="xeDangThue">0</div>
+                        <div class="xe-details-contract-stat-label">Đang thuê</div>
+                    </div>
+                    <div class="xe-details-contract-stat">
+                        <div class="xe-details-contract-stat-number" id="xeTongDoanhThu">0đ</div>
+                        <div class="xe-details-contract-stat-label">Tổng doanh thu</div>
+                    </div>
+                </div>
+                <!-- Contract Table -->
+                <div class="xe-details-contract-table" id="xeContractTable">
+                    <!-- Table content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // Hiển thị thông báo TempData nếu có
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                toastr.success('@TempData["Success"]');
+            </text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                toastr.error('@TempData["Error"]');
+            </text>
+        }
+        
+        // Biến để lưu timeout cho debounce
+        let filterTimeout;
+        
+        // Biến để lưu ID xe hiện tại trong modal
+        let currentXeId = null;
+        
+        $(document).ready(function() {
+            // Prevent any accidental clicks on disabled buttons
+            $('.btn-disabled').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            });
+            
+            // Close modal when clicking outside
+            $(document).on('click', '.custom-modal-overlay', function(e) {
+                if (e.target === this) {
+                    closeCustomModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && $('.custom-modal-overlay').hasClass('show')) {
+                    closeCustomModal();
+                }
+            });
+
+            // Thiết lập event listeners cho lọc real-time
+            setupFilterEvents();
+            
+            // Kiểm tra trạng thái filter ban đầu và hiển thị/ẩn button xóa lọc
+            checkFilterStatus();
+        });
+
+        // Thiết lập các event listeners cho bộ lọc
+        function setupFilterEvents() {
+            // Lọc real-time khi thay đổi input tìm kiếm (với debounce)
+            $('#searchString').on('input', function() {
+                clearTimeout(filterTimeout);
+                filterTimeout = setTimeout(function() {
+                    filterXe();
+                }, 300); // Delay 300ms để tránh gọi quá nhiều
+            });
+
+            // Lọc real-time khi thay đổi dropdown
+            $('#loaiXe, #hangXe, #trangThai').on('change', function() {
+                filterXe();
+            });
+
+            // Nút lọc
+            $('#filterBtn').on('click', function() {
+                filterXe();
+            });
+
+            // Nút xóa lọc
+            $('#clearFilterBtn').on('click', function() {
+                clearFilters();
+            });
+        }
+
+        // Hàm lọc xe real-time
+        function filterXe() {
+            // Lấy giá trị từ các input
+            const searchString = $('#searchString').val();
+            const loaiXe = $('#loaiXe').val();
+            const hangXe = $('#hangXe').val();
+            const trangThai = $('#trangThai').val();
+            const showDeleted = @(ViewBag.ShowDeleted == true ? "true" : "false");
+            
+            // Kiểm tra xem có filter nào được áp dụng không
+            const hasFilters = searchString || loaiXe || hangXe || trangThai;
+            
+            // Hiển thị/ẩn button xóa lọc dựa trên việc có filter hay không
+            if (hasFilters) {
+                $('#clearFilterBtn').show();
+            } else {
+                $('#clearFilterBtn').hide();
+            }
+            
+            // Hiển thị loading
+            $('#xeTableContainer').html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Đang tải...</span></div><br><small class="text-muted">Đang lọc dữ liệu...</small></div>');
+            
+            // Gọi AJAX để lọc
+            $.ajax({
+                url: '@Url.Action("FilterXe", "Xe")',
+                type: 'GET',
+                data: {
+                    searchString: searchString,
+                    loaiXe: loaiXe,
+                    hangXe: hangXe,
+                    trangThai: trangThai,
+                    showDeleted: showDeleted
+                },
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(result) {
+                    $('#xeTableContainer').html(result);
+                    
+                    // Cập nhật URL để lưu trạng thái filter
+                    updateUrl(searchString, loaiXe, hangXe, trangThai, showDeleted);
+                },
+                error: function(xhr, status, error) {
+                    $('#xeTableContainer').html('<div class="text-center py-4 text-danger"><i class="bi bi-exclamation-triangle"></i><br>Có lỗi xảy ra khi lọc dữ liệu</div>');
+                }
+            });
+        }
+
+        // Hàm kiểm tra trạng thái filter và hiển thị/ẩn button xóa lọc
+        function checkFilterStatus() {
+            const searchString = $('#searchString').val();
+            const loaiXe = $('#loaiXe').val();
+            const hangXe = $('#hangXe').val();
+            const trangThai = $('#trangThai').val();
+            
+            const hasFilters = searchString || loaiXe || hangXe || trangThai;
+            
+            if (hasFilters) {
+                $('#clearFilterBtn').show();
+            } else {
+                $('#clearFilterBtn').hide();
+            }
+        }
+        
+        // Hàm xóa tất cả bộ lọc
+        function clearFilters() {
+            $('#searchString').val('');
+            $('#loaiXe').val('');
+            $('#hangXe').val('');
+            $('#trangThai').val('');
+            
+            // Ẩn button xóa lọc
+            $('#clearFilterBtn').hide();
+            
+            // Lọc lại với dữ liệu rỗng
+            filterXe();
+        }
+
+        // Hàm cập nhật URL để lưu trạng thái filter
+        function updateUrl(searchString, loaiXe, hangXe, trangThai, showDeleted) {
+            const params = new URLSearchParams();
+            if (searchString) params.append('searchString', searchString);
+            if (loaiXe) params.append('loaiXe', loaiXe);
+            if (hangXe) params.append('hangXe', hangXe);
+            if (trangThai) params.append('trangThai', trangThai);
+            if (showDeleted) params.append('showDeleted', showDeleted);
+            
+            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.history.pushState({}, '', newUrl);
+        }
+
+        // ===== XE DETAILS MODAL FUNCTIONS =====
+        
+        // Hiển thị modal chi tiết xe
+        function showXeDetails(xeId) {
+            const modal = document.getElementById('xeDetailsModal');
+            const loading = document.getElementById('xeDetailsLoading');
+            const content = document.getElementById('xeDetailsContent');
+            
+            // Lưu ID xe hiện tại
+            currentXeId = xeId;
+            
+            // Hiển thị modal và loading
+            modal.classList.add('show');
+            loading.style.display = 'block';
+            content.style.display = 'none';
+            
+            // Ẩn phần lịch sử hợp đồng
+            document.getElementById('xeContractHistory').style.display = 'none';
+            
+            // Gọi API để lấy dữ liệu xe
+            fetch(`/Xe/GetXeDetails/${xeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateXeDetails(data.xe);
+                        loading.style.display = 'none';
+                        content.style.display = 'block';
+                        
+                        // Load lịch sử hợp đồng
+                        loadXeContractHistory(xeId);
+                    } else {
+                        toastr.error(data.message || 'Có lỗi xảy ra khi tải thông tin xe');
+                        closeXeDetailsModal();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    toastr.error('Có lỗi xảy ra khi tải thông tin xe');
+                    closeXeDetailsModal();
+                });
+        }
+        
+        // Đóng modal chi tiết xe
+        function closeXeDetailsModal() {
+            const modal = document.getElementById('xeDetailsModal');
+            modal.classList.remove('show');
+        }
+        
+        // Điền dữ liệu vào modal
+        function populateXeDetails(xe) {
+            // Cập nhật tiêu đề
+            document.getElementById('modalTitle').textContent = `Chi tiết xe - ${xe.tenXe}`;
+            
+            // Cập nhật hình ảnh
+            const imageContainer = document.getElementById('xeImageContainer');
+            if (xe.hinhAnhHienThi) {
+                imageContainer.innerHTML = `<img src="/images/xe/${xe.hinhAnhHienThi}" class="xe-details-main-image" alt="${xe.tenXe}" />`;
+            } else {
+                imageContainer.innerHTML = `<div class="xe-details-image-placeholder"><i class="bi bi-image"></i></div>`;
+            }
+            
+            // Cập nhật thông tin cơ bản
+            document.getElementById('xeMaXe').textContent = `#XE${xe.maXe.toString().padStart(3, '0')}`;
+            document.getElementById('xeTenXe').textContent = xe.tenXe || '-';
+            document.getElementById('xeBienSo').textContent = xe.bienSoXe || '-';
+            document.getElementById('xeHangXe').textContent = xe.hangXe || '-';
+            document.getElementById('xeDongXe').textContent = xe.dongXe || '-';
+            document.getElementById('xeLoaiXe').textContent = xe.loaiXe || '-';
+            
+            // Cập nhật thông tin tài chính
+            document.getElementById('xeGiaThue').textContent = xe.giaThue ? `${xe.giaThue.toLocaleString('vi-VN')}đ` : '-';
+            document.getElementById('xeGiaTriXe').textContent = xe.giaTriXe ? `${xe.giaTriXe.toLocaleString('vi-VN')}đ` : '-';
+            document.getElementById('xeTongChiPhi').textContent = xe.tongChiPhi ? `${xe.tongChiPhi.toLocaleString('vi-VN')}đ` : '-';
+            document.getElementById('xeChiPhiSuaChua').textContent = xe.chiPhiSuaChua ? `${xe.chiPhiSuaChua.toLocaleString('vi-VN')}đ` : '-';
+            
+            // Cập nhật trạng thái
+            const statusContainer = document.getElementById('xeTrangThaiContainer');
+            const statusClass = getStatusClass(xe.trangThai);
+            statusContainer.innerHTML = `<span class="xe-details-status ${statusClass}">${xe.trangThai}</span>`;
+            
+            // Cập nhật thống kê
+            document.getElementById('xeSoHopDong').textContent = xe.soHopDong || 0;
+            document.getElementById('xeSoHinhAnh').textContent = xe.soHinhAnh || 0;
+            
+            // Cập nhật thông tin sự cố (nếu có)
+            const suCoCard = document.getElementById('xeSuCoCard');
+            if (xe.ngayGapSuCo || xe.moTaThietHai) {
+                document.getElementById('xeNgaySuCo').textContent = xe.ngayGapSuCo ? new Date(xe.ngayGapSuCo).toLocaleDateString('vi-VN') : '-';
+                document.getElementById('xeMoTaThietHai').textContent = xe.moTaThietHai || '-';
+                suCoCard.style.display = 'block';
+            } else {
+                suCoCard.style.display = 'none';
+            }
+        }
+        
+        // Lấy class CSS cho trạng thái
+        function getStatusClass(trangThai) {
+            switch (trangThai) {
+                case 'Sẵn sàng': return 'san-sang';
+                case 'Đang thuê': return 'dang-thue';
+                case 'Bảo trì': return 'bao-tri';
+                case 'Hư hỏng': return 'hu-hong';
+                case 'Mất': return 'mat';
+                case 'Đã xóa': return 'da-xoa';
+                default: return 'san-sang';
+            }
+        }
+        
+        // Đóng modal khi click bên ngoài
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('xeDetailsModal');
+            if (e.target === modal) {
+                closeXeDetailsModal();
+            }
+        });
+        
+        // Đóng modal khi nhấn ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('xeDetailsModal');
+                if (modal.classList.contains('show')) {
+                    closeXeDetailsModal();
+                }
+            }
+        });
+
+        // Load lịch sử hợp đồng
+        function loadXeContractHistory(xeId) {
+            fetch(`/Xe/GetXeLichSuHopDong/${xeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateContractHistory(data.thongKe, data.lichSuHopDong);
+                        document.getElementById('xeContractHistory').style.display = 'block';
+                    } else {
+                        console.error('Error loading contract history:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Điền dữ liệu lịch sử hợp đồng
+        function populateContractHistory(thongKe, lichSuHopDong) {
+            // Cập nhật thống kê
+            document.getElementById('xeTongHopDong').textContent = thongKe.tongHopDong;
+            document.getElementById('xeDaHoanThanh').textContent = thongKe.daHoanThanh;
+            document.getElementById('xeDangThue').textContent = thongKe.dangThue;
+            document.getElementById('xeTongDoanhThu').textContent = thongKe.tongDoanhThu.toLocaleString('vi-VN') + 'đ';
+
+            // Tạo bảng lịch sử hợp đồng
+            const tableContainer = document.getElementById('xeContractTable');
+            
+            if (lichSuHopDong.length === 0) {
+                tableContainer.innerHTML = `
+                    <div class="xe-details-contract-empty">
+                        <i class="bi bi-inbox"></i>
+                        <h5>Không có hợp đồng nào</h5>
+                        <p>Chưa có hợp đồng nào được tạo cho xe này.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã HĐ</th>
+                            <th>Khách hàng</th>
+                            <th>Số điện thoại</th>
+                            <th>Ngày nhận</th>
+                            <th>Ngày trả</th>
+                            <th>Số ngày</th>
+                            <th>Thành tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            lichSuHopDong.forEach(hopDong => {
+                const ngayNhan = new Date(hopDong.ngayNhanXe);
+                const ngayTra = hopDong.ngayTraXeThucTe ? new Date(hopDong.ngayTraXeThucTe) : null;
+                const soNgay = ngayTra ? 
+                    Math.ceil((ngayTra - ngayNhan) / (1000 * 60 * 60 * 24)) + 1 :
+                    Math.ceil((new Date() - ngayNhan) / (1000 * 60 * 60 * 24)) + 1;
+                
+                const trangThai = ngayTra ? 'hoan-thanh' : 'dang-thue';
+                const trangThaiText = ngayTra ? 'Đã hoàn thành' : 'Đang thuê';
+
+                // Kiểm tra xem thời gian có phải là 00:00 không (thời gian mặc định)
+                const isDefaultTime = (date) => {
+                    return date.getHours() === 0 && date.getMinutes() === 0;
+                };
+
+                const formatDateTime = (date) => {
+                    const dateStr = date.toLocaleDateString('vi-VN');
+                    const timeStr = isDefaultTime(date) ? '' : date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'});
+                    return timeStr ? `${dateStr} ${timeStr}` : dateStr;
+                };
+
+                tableHTML += `
+                    <tr>
+                        <td><strong>#HD${hopDong.maHopDong.toString().padStart(3, '0')}</strong></td>
+                        <td>
+                            <strong>${hopDong.hoTenKhach}</strong>
+                            ${hopDong.soCCCD ? `<br><small class="text-muted">CCCD: ${hopDong.soCCCD}</small>` : ''}
+                        </td>
+                        <td>${hopDong.soDienThoai}</td>
+                        <td>${formatDateTime(ngayNhan)}</td>
+                        <td>${ngayTra ? formatDateTime(ngayTra) : '<span class="text-muted">Chưa trả</span>'}</td>
+                        <td>${soNgay} ngày</td>
+                        <td class="text-danger"><strong>${hopDong.thanhTienTinhToan.toLocaleString('vi-VN')}đ</strong></td>
+                        <td><span class="xe-details-contract-status ${trangThai}">${trangThaiText}</span></td>
+                        <td>
+                            <div class="xe-details-contract-actions">
+                                <a href="/QuanLyHopDong/ChiTiet/${hopDong.maHopDong}" class="btn btn-info btn-sm" title="Xem chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                ${hopDong.coHoaDon ? `<a href="/QuanLyHoaDon/ChiTiet/${hopDong.maHoaDon}" class="btn btn-success btn-sm" title="Xem hóa đơn"><i class="bi bi-receipt"></i></a>` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+                         tableContainer.innerHTML = tableHTML;
+         }
+
+        // Chuyển đến trang lịch sử hợp đồng
+        function viewContractHistory() {
+            if (currentXeId) {
+                // Đóng modal trước
+                closeXeDetailsModal();
+                
+                // Chuyển đến trang lịch sử hợp đồng
+                window.location.href = `/Xe/LichSuHopDong/${currentXeId}`;
+            } else {
+                toastr.error('Không tìm thấy thông tin xe');
+            }
+        }
+
+
+    </script>
+}

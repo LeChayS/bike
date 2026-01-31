@@ -1,0 +1,493 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <link href="~/Content/homepage.css" rel="stylesheet" /> <!--Link CSS-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!--Link Bootstrap 5-->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" /> <!--Link icon-->
+    <link href="~/css/homepage.css" rel="stylesheet">
+    
+    @RenderSection("Styles", required: false)
+    
+    <style>
+        .cart-badge {
+            background: #ff0080;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 25px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        /* Fix dropdown menu bị che */
+        .logo-section {
+            position: relative;
+            z-index: 10000;
+        }
+
+        .logo-section .dropdown {
+            position: relative;
+            z-index: 10001;
+        }
+
+        .logo-section .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
+            z-index: 10002 !important;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 10px 0;
+            min-width: 200px;
+            margin-top: 5px;
+            background: white;
+        }
+
+        .logo-section .dropdown-item {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .logo-section .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #ff0080;
+            padding-left: 25px;
+        }
+
+        .logo-section .dropdown-divider {
+            margin: 8px 0;
+            border-color: #eee;
+        }
+
+        /* Ensure dropdown shows on top of everything */
+        .logo-section .dropdown.show .dropdown-menu {
+            display: block !important;
+            transform: translateY(0);
+            opacity: 1;
+            z-index: 10002 !important;
+        }
+
+        /* Override Bootstrap dropdown styles */
+        .dropdown-toggle::after {
+            border: none;
+            content: "\f107";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            margin-left: 5px;
+        }
+
+        /* Force dropdown to appear above navbar */
+        .logo-section .dropdown-menu.show {
+            z-index: 10002 !important;
+            position: absolute !important;
+        }
+
+        /* Hide overflow on container to prevent cutting off */
+        .logo-section .container {
+            overflow: visible !important;
+        }
+
+        /* Fix navbar alignment - đảm bảo tất cả nav-link thẳng hàng */
+        .navbar-nav .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            height: auto !important;
+            padding: 0.75rem 1rem !important;
+            line-height: 1.5 !important;
+            vertical-align: middle !important;
+        }
+
+        .navbar-nav .nav-link.dropdown-toggle {
+            display: flex !important;
+            align-items: center !important;
+            padding: 0.75rem 1rem !important;
+        }
+
+        .navbar-nav .nav-item {
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        /* Override Bootstrap dropdown arrow positioning */
+        .navbar-nav .dropdown-toggle::after {
+            margin-left: 0.5rem !important;
+            vertical-align: middle !important;
+            border: none !important;
+            content: "\f107" !important;
+            font-family: "bootstrap-icons" !important;
+            font-weight: normal !important;
+        }
+
+        /* Ensure consistent height for all nav items */
+        .navbar-nav {
+            align-items: center !important;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <i class="bi bi-clock"></i> THỜI GIAN LÀM VIỆC CHÍNH : 8H - 20H
+                </div>
+                <div class="col-md-6 text-end">
+                    <i class="bi bi-envelope"></i> Email : zzcz4991@gmail.com
+                    <span class="ms-3"><i class="bi bi-telephone"></i> Hotline : 0383407538</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logo Section -->
+    <div class="logo-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div style="background: #f0f0f0; padding: 10px; border-radius: 10px">
+                            <i class="bi bi-scooter"
+                               style="font-size: 40px; color: #0066cc"></i>
+                        </div>
+                        <div class="brand-name">CHO THUÊ XE MÁY SÀI GÒN</div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <!-- Danh sách xe -->
+                    <a href="@Url.Action("Index", "Cart")" class="cart-btn me-3" id="cart-link">
+                        <i class="bi bi-cart3"></i> DANH SÁCH XE
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                    
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <!-- User đã đăng nhập -->
+                        <div class="dropdown d-inline">
+                            <a href="#" class="login-btn dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> @User.Identity.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")">
+                                    <i class="bi bi-person-gear"></i> Quản lý profile
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                                {
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "BaoCao")">
+                                        <i class="bi bi-speedometer2"></i> Dashboard
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                }
+                                <li><a class="dropdown-item" href="@Url.Action("MyReservations", "DatCho")">
+                                    <i class="bi bi-list-check"></i> Lịch sử đặt chỗ
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- User chưa đăng nhập -->
+                        <a href="@Url.Action("Login", "Account")" class="login-btn">
+                            <i class="bi bi-person-circle"></i> Đăng nhập
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-house-door"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">GIỚI THIỆU</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           id="navbarDropdown"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            DANH SÁCH XE CHO THUÊ
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            @if (ViewBag.DanhSachLoaiXe != null)
+                            {
+                                var danhSachLoaiXe = ViewBag.DanhSachLoaiXe as List<bike.Models.LoaiXe>;
+                                var xeTheoLoai = ViewBag.XeTheoLoai as Dictionary<int, List<bike.Models.Xe>>;
+                                
+                                @foreach (var loaiXe in danhSachLoaiXe)
+                                {
+                                    <li class="dropdown-header">@loaiXe.TenLoaiXe.ToUpper()</li>
+                                    
+                                    @if (xeTheoLoai != null && xeTheoLoai.ContainsKey(loaiXe.MaLoaiXe))
+                                    {
+                                        @foreach (var xe in xeTheoLoai[loaiXe.MaLoaiXe])
+                                        {
+                                            <li><a class="dropdown-item" href="@Url.Action("XemChiTiet", "Home", new { id = xe.MaXe })">@xe.TenXe</a></li>
+                                        }
+                                    }
+                                    
+                                    <li><a class="dropdown-item text-primary fw-bold" href="@Url.Action("Index", "Home", new { loaiXe = loaiXe.MaLoaiXe })">
+                                        <i class="bi bi-arrow-right"></i> Xem tất cả @loaiXe.TenLoaiXe
+                                    </a></li>
+                                    
+                                    @if (loaiXe != danhSachLoaiXe.Last())
+                                    {
+                                        <li><hr class="dropdown-divider" /></li>
+                                    }
+                                }
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <a class="dropdown-item fw-bold" href="@Url.Action("Index", "Home")">
+                                        <strong><i class="bi bi-grid"></i> Xem tất cả xe</strong>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <!-- Fallback nếu không có dữ liệu -->
+                                <li class="dropdown-header">XE TAY GA</li>
+                                <li><a class="dropdown-item" href="#">Honda SH Mode</a></li>
+                                <li><a class="dropdown-item" href="#">Honda Air Blade</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li class="dropdown-header">XE SỐ</li>
+                                <li><a class="dropdown-item" href="#">Honda Wave Alpha</a></li>
+                                <li><a class="dropdown-item" href="#">Honda Future</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("Index", "Home")"><strong>Xem tất cả xe</strong></a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">CHI NHÁNH</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">TUYỂN DỤNG</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">TIN TỨC</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">LIÊN HỆ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    
+    @RenderBody()
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="bi bi-scooter"></i>
+                        </div>
+                        <h3 class="service-title">GIAO - TRẢ TẬN NƠI</h3>
+                        <p>Giao xe - Trả xe theo yêu cầu với phí Hạt Rẻ</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+                        <h3 class="service-title">ĐỔI XE NẾU KHÔNG HÀI LÒNG</h3>
+                        <p>Đổi xe nhanh chóng nếu không hài lòng về chất lượng</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="bi bi-cart3"></i>
+                        </div>
+                        <h3 class="service-title">ĐẶT XE NHANH 24/7</h3>
+                        <p>Đặt xe trên Website, Zalo, Facebook nhanh chóng tiện lợi</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <h3 class="service-title">HỖ TRỢ KHI PHÁT SINH SỰ CỐ</h3>
+                        <p>Hỗ trợ nhanh khi có vấn đề xảy đến trong thời gian thuê</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div style="
+                background: white;
+                padding: 15px;
+                border-radius: 10px;
+                display: inline-block;
+                margin-bottom: 20px;
+              ">
+                        <i class="bi bi-scooter"
+                           style="font-size: 50px; color: #0066cc"></i>
+                    </div>
+                    <p>
+                        Công ty uy tín cho thuê xe máy tại TPHCM
+                    </p>
+                    <p class="mt-3">
+                        Đối Tác SEO : KIM RI CHA AND MOHAMED SATI
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h3>CHÍNH SÁCH CHÚNG TÔI</h3>
+                    <ul>
+                        <li>Chính sách và quy định</li>
+                        <li>Quy Định Khi Thuê Xe</li>
+                        <li>Quy định về thanh toán</li>
+                        <li>Chính sách vận chuyển, giao nhận</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h3>CÔNG TY TNHH DỊCH VỤ XE TỐI XUÂN HẠNH</h3>
+                    <h2 class="footer-company-name">CHO THUÊ XE MÁY SÀI GÒN</h2>
+                    <div class="contact-info">
+                        <p>
+                            <i class="bi bi-geo-alt-fill"></i> Địa chỉ: 95/38 Nguyễn Văn
+                            Trỗi Phường 12 Quận Phú Nhuận TP.HCM
+                        </p>
+                        <p>
+                            <i class="bi bi-telephone-fill"></i> Điện thoại: 0908 630 065
+                        </p>
+                        <p>
+                            <i class="bi bi-envelope-fill"></i> Email:
+                            hanhduong.2006@yahoo.com
+                        </p>
+                        <p>
+                            <i class="bi bi-globe"></i> Email:
+                            https://chothuexemaysaigon.com
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            document
+              .querySelectorAll(".tab-btn")
+              .forEach((b) => b.classList.remove("active"));
+            this.classList.add("active");
+          });
+        });
+
+        // Sticky navbar with scroll effect
+        window.addEventListener("scroll", function () {
+          const navbar = document.querySelector(".navbar");
+          if (window.scrollY > 50) {
+            navbar.classList.add("scrolled");
+          } else {
+            navbar.classList.remove("scrolled");
+          }
+        });
+
+        // Cart functionality
+        $(document).ready(function() {
+            loadCartCount();
+        });
+
+        function loadCartCount() {
+            $.ajax({
+                url: '@Url.Action("GetItemCount", "Cart")',
+                type: 'GET',
+                success: function(response) {
+                    updateCartBadge(response.count);
+                },
+                error: function() {
+                    console.log('Error loading cart count');
+                }
+            });
+        }
+
+        function updateCartBadge(count) {
+            const badge = $('.cart-badge');
+            if (count > 0) {
+                badge.text(count).show();
+            } else {
+                badge.hide();
+            }
+        }
+
+        function updateCartCountDisplay() {
+            // Function to be called from other scripts to update cart count
+            loadCartCount();
+        }
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
