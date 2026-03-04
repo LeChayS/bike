@@ -7,71 +7,9 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/xe-index.css" />
-    <link rel="stylesheet" href="~/css/responsive.css" />
-    <style>
-        .filter-section {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .date-range-inputs {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .stats-number {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        
-        .time-filter-btn {
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .time-filter-btn.active {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        
-        /* Hiệu ứng mượt mà cho container */
-        #contentContainer {
-            transition: opacity 0.3s ease-in-out;
-        }
-        
-        /* Hiệu ứng cho button khi loading */
-        .time-filter-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        
-        /* Spinner animation */
-        .spinner-border {
-            animation: spinner-border 0.75s linear infinite;
-        }
-        
-        /* Thông báo lỗi ngày */
-        .date-error-message {
-            animation: fadeIn 0.3s ease-in;
-        }
-        
-        @@keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/xe/xe-index.css" />
+    <link rel="stylesheet" href="~/css/xe/responsive.css" />
+    <link rel="stylesheet" href="/css/xe/lichsuhopdong.css">
 }
 
 <div class="container-fluid">
