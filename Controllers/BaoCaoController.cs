@@ -50,14 +50,6 @@ namespace bike.Controllers
                            h.NgayTraXeThucTe.Value.Date == today)
                 .SumAsync(h => h.TongTien);
 
-            // Tính tổng chi tiêu trong ngày
-            var tongChiTieuHomNay = await _context.ChiTieu
-                .Where(ct => ct.NgayChi.Date == today)
-                .SumAsync(ct => ct.SoTien);
-
-            // Doanh thu thực = Doanh thu hợp đồng - Chi tiêu (tối thiểu là 0)
-            viewModel.DoanhThuHomNay = Math.Max(0, doanhThuTheoHopDong - tongChiTieuHomNay);
-
             // Xe đang cho thuê
             viewModel.XeDangChoThue = await _context.Xe
                 .Where(x => x.TrangThai == "Đang thuê")
@@ -101,13 +93,6 @@ namespace bike.Controllers
                            h.NgayTraXeThucTe.Value.Date <= previousEndDate)
                 .SumAsync(h => h.TongTien);
 
-            var previousExpenses = await _context.ChiTieu
-                .Where(ct => ct.NgayChi.Date >= previousStartDate && 
-                            ct.NgayChi.Date <= previousEndDate)
-                .SumAsync(ct => ct.SoTien);
-
-            var previousRevenue = Math.Max(0, previousRevenueGross - previousExpenses);
-
             var currentRevenueGross = await _context.HopDong
                 .Where(h => h.TrangThai == "Hoàn thành" && 
                            h.NgayTraXeThucTe.HasValue &&
@@ -115,17 +100,6 @@ namespace bike.Controllers
                            h.NgayTraXeThucTe.Value.Date <= endDate)
                 .SumAsync(h => h.TongTien);
 
-            var currentExpenses = await _context.ChiTieu
-                .Where(ct => ct.NgayChi.Date >= startDate && 
-                            ct.NgayChi.Date <= endDate)
-                .SumAsync(ct => ct.SoTien);
-
-            var currentRevenue = Math.Max(0, currentRevenueGross - currentExpenses);
-
-            if (previousRevenue > 0)
-            {
-                viewModel.PhanTramDoanhThu = ((double)(currentRevenue - previousRevenue) / (double)previousRevenue) * 100;
-            }
 
 
 
@@ -196,19 +170,6 @@ namespace bike.Controllers
                                h.NgayTraXeThucTe.Value.Date >= startDate && 
                                h.NgayTraXeThucTe.Value.Date <= endDate)
                     .SumAsync(h => h.TongTien);
-
-                var expenses = await _context.ChiTieu
-                    .Where(ct => ct.NgayChi.Date >= startDate && 
-                                ct.NgayChi.Date <= endDate)
-                    .SumAsync(ct => ct.SoTien);
-
-                var revenue = Math.Max(0, revenueGross - expenses);
-
-                monthlyRevenue.Add(new BieuDoItem
-                {
-                    Label = $"Tháng {month}",
-                    Value = revenue
-                });
             }
 
             ViewBag.Year = currentYear;

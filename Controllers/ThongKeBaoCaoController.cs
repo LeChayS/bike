@@ -42,17 +42,6 @@ namespace bike.Controllers
                                h.NgayTraXeThucTe.Value.Date <= period.EndDate)
                     .SumAsync(h => h.TongTien);
 
-                var chiTieuNgay = await _context.ChiTieu
-                    .Where(ct => ct.NgayChi.Date >= period.StartDate &&
-                                ct.NgayChi.Date <= period.EndDate)
-                    .SumAsync(ct => ct.SoTien);
-
-                var doanhThuNgay = Math.Max(0, doanhThuNgayGross - chiTieuNgay);
-                viewModel.BieuDoDoanhThu.Add(new BieuDoItem
-                {
-                    Label = period.Label,
-                    Value = doanhThuNgay
-                });
             }
 
             // 1.1. Dữ liệu biểu đồ thiệt hại - chỉ tính những thiệt hại chưa được đền bù
@@ -151,14 +140,7 @@ namespace bike.Controllers
                            h.NgayTraXeThucTe.Value.Date <= chartPeriods.Last().EndDate)
                 .SumAsync(h => h.TongTien);
 
-            var chiTieu = await _context.ChiTieu
-                .Where(ct => ct.NgayChi.Date >= chartPeriods.First().StartDate &&
-                            ct.NgayChi.Date <= chartPeriods.Last().EndDate)
-                .SumAsync(ct => ct.SoTien);
-
             viewModel.DoanhThuGoc = doanhThuGross; // Lưu doanh thu gốc
-            viewModel.TongChiTieu = chiTieu; // Lưu tổng chi tiêu
-            viewModel.DoanhThuHomNay = Math.Max(0, doanhThuGross - chiTieu);
 
             // Tổng tiền thiệt hại theo filter được chọn - chỉ tính những thiệt hại chưa được đền bù
             viewModel.TongThietHai = await _context.ThietHai
@@ -262,16 +244,6 @@ namespace bike.Controllers
                                    h.NgayTraXeThucTe.Value.Date >= period.StartDate &&
                                    h.NgayTraXeThucTe.Value.Date <= period.EndDate)
                         .SumAsync(h => h.TongTien);
-
-                    var chiTieu = await _context.ChiTieu
-                        .Where(ct => ct.NgayChi.Date >= period.StartDate &&
-                                    ct.NgayChi.Date <= period.EndDate)
-                        .SumAsync(ct => ct.SoTien);
-
-                    var doanhThu = Math.Max(0, doanhThuGross - chiTieu);
-
-                    doanhThuData.Add(doanhThu);
-                    chiTieuData.Add(chiTieu);
 
                     // Tổng tiền thiệt hại
                     var thietHai = await _context.ThietHai
@@ -406,12 +378,6 @@ namespace bike.Controllers
                                    h.NgayTraXeThucTe.Value.Date <= period.EndDate)
                         .SumAsync(h => h.TongTien);
 
-                    // Chi tiêu (từ bảng ChiTieu)
-                    var chiTieu = await _context.ChiTieu
-                        .Where(ct => ct.NgayChi.Date >= period.StartDate &&
-                                    ct.NgayChi.Date <= period.EndDate)
-                        .SumAsync(ct => ct.SoTien);
-
                     // Thiệt hại (từ bảng ThietHai) - chỉ tính những thiệt hại chưa được đền bù
                     var thietHai = await _context.ThietHai
                         .Where(t => t.NgayXayRa.Date >= period.StartDate &&
@@ -419,17 +385,8 @@ namespace bike.Controllers
                                    t.TrangThaiXuLy != "Đã đền bù")
                         .SumAsync(t => t.SoTienDenBu);
 
-                    // Doanh thu sau khi trừ chi tiêu (không trừ thiệt hại)
-                    var doanhThu = doanhThuGoc - chiTieu;
-
-                    // Doanh thu thực tế = Doanh thu gốc - Chi tiêu - Thiệt hại (chỉ những thiệt hại chưa đền bù)
-                    var doanhThuThucTe = doanhThuGoc - chiTieu - thietHai;
-
                     doanhThuGocData.Add(doanhThuGoc);
-                    doanhThuData.Add(doanhThu);
-                    chiTieuData.Add(chiTieu);
                     thietHaiData.Add(thietHai);
-                    doanhThuThucTeData.Add(doanhThuThucTe);
                 }
 
                 return Json(new
@@ -504,13 +461,6 @@ namespace bike.Controllers
                                h.NgayTraXeThucTe.Value.Date <= chartPeriods.Last().EndDate)
                     .SumAsync(h => h.TongTien);
 
-                var chiTieu = await _context.ChiTieu
-                    .Where(ct => ct.NgayChi.Date >= chartPeriods.First().StartDate &&
-                                ct.NgayChi.Date <= chartPeriods.Last().EndDate)
-                    .SumAsync(ct => ct.SoTien);
-
-                var doanhThu = Math.Max(0, doanhThuGross - chiTieu);
-
                 // Tổng tiền thiệt hại theo filter được chọn - chỉ tính những thiệt hại chưa được đền bù
                 var tongThietHai = await _context.ThietHai
                     .Where(t => t.NgayXayRa.Date >= chartPeriods.First().StartDate &&
@@ -547,9 +497,7 @@ namespace bike.Controllers
                 return Json(new
                 {
                     success = true,
-                    doanhThu = doanhThu,
                     doanhThuGoc = doanhThuGross,
-                    tongChiTieu = chiTieu,
                     tongThietHai = tongThietHai,
                     tongDonDat = tongDonDat,
                     khachHangMoi = khachHangMoi,

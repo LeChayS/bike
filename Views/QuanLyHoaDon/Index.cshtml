@@ -84,14 +84,14 @@
                 <h1><i class="bi bi-receipt"></i> Quản Lý Hóa Đơn</h1>
                 <p class="mb-0">Theo dõi và quản lý các hóa đơn thanh toán</p>
             </div>
-            <div>
+            @* <div>
                 <a asp-action="DanhSachHopDongChuaCoHoaDon" class="btn btn-light">
                     <i class="bi bi-plus-circle"></i> Tạo hóa đơn
                 </a>
                 <a asp-action="BaoCaoDoanhThu" class="btn btn-warning">
                     <i class="bi bi-bar-chart"></i> Báo cáo doanh thu
                 </a>
-            </div>
+            </div> *@
         </div>
     </div>
 
@@ -99,21 +99,21 @@
     <div class="row stat-cards">
         <div class="col-md-4">
             <div class="stat-card">
-                <i class="bi bi-receipt-cutoff" style="font-size: 40px; color: #666;"></i>
+                @* <i class="bi bi-receipt-cutoff" style="font-size: 40px; color: #666;"></i> *@
                 <div class="stat-number">@ViewBag.TotalItems</div>
                 <div class="stat-label">Tổng hóa đơn</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="stat-card">
-                <i class="bi bi-currency-dollar" style="font-size: 40px; color: #4CAF50;"></i>
+                @* <i class="bi bi-currency-dollar" style="font-size: 40px; color: #4CAF50;"></i> *@
                 <div class="stat-number stat-revenue">@ViewBag.TongDoanhThu.ToString("N0")đ</div>
                 <div class="stat-label">Tổng doanh thu</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="stat-card">
-                <i class="bi bi-calendar-day" style="font-size: 40px; color: #2196F3;"></i>
+                @* <i class="bi bi-calendar-day" style="font-size: 40px; color: #2196F3;"></i> *@
                 <div class="stat-number stat-count">@ViewBag.SoHoaDonHomNay</div>
                 <div class="stat-label">Hóa đơn hôm nay</div>
             </div>

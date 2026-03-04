@@ -203,20 +203,6 @@
                 </div>
             </div>
 
-            <!-- Quản lý chi tiêu -->
-            <div class="permission-section">
-                <h5><i class="bi bi-cash-stack"></i> Quản lý chi tiêu</h5>
-                <div class="radio-group">
-                    @foreach (var option in permissionOptions)
-                    {
-                        <div class="radio-item">
-                            <input type="radio" asp-for="ChiTieuPermission" value="@option.Value" id="chitieu_@option.Value" />
-                            <label for="chitieu_@option.Value">@option.Text</label>
-                        </div>
-                    }
-                </div>
-            </div>
-
             <!-- Quản lý thiệt hại -->
             <div class="permission-section">
                 <h5><i class="bi bi-exclamation-triangle"></i> Quản lý thiệt hại</h5>
