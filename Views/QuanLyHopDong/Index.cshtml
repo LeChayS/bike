@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="/css/quanlyhopdong/qlhopdong-index.css" />
 }
 
+@section Scripts {
+    <script src="~/js/quanlyhopdong/filter.js"></script>
+}
+
 <div class="container-fluid">
 
     <!-- Page Header -->
@@ -489,20 +493,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script src="~/js/quanlyhopdong-filter.js"></script>
-    
-    <style>
-        @@keyframes slideOutUp {
-            from {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-        }
-    </style>
-}

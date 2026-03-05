@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="~/css/quanlyhoadon/qlhoadon-index.css" />
 }
 
+@section Scripts {
+    <script>
+        // Auto-submit form when date changes
+        $('input[type="date"]').on('change', function() {
+            $(this).closest('form').submit();
+        });
+    </script>
+}
+
 <div class="container-fluid">
     <!-- Page Header -->
     <div class="page-header">
@@ -173,12 +182,3 @@
         }
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        // Auto-submit form when date changes
-        $('input[type="date"]').on('change', function() {
-            $(this).closest('form').submit();
-        });
-    </script>
-}

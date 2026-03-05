@@ -8,6 +8,15 @@
     <link href="/css/quanlybaocao/qlbaocao-index.css" rel="stylesheet">
 }
 
+@section Scripts {
+    <script>
+        // Auto refresh dashboard data every 30 seconds
+        setInterval(function() {
+            location.reload();
+        }, 30000);
+    </script>
+}
+
 <div class="container-fluid">
     <!-- Dashboard Header -->
     <div class="dashboard-header">
@@ -220,12 +229,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        // Auto refresh dashboard data every 30 seconds
-        setInterval(function() {
-            location.reload();
-        }, 30000);
-    </script>
-}
