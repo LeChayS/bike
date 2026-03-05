@@ -1,0 +1,90 @@
+﻿.edit-vehicle-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 0;
+}
+
+.edit-vehicle-header {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+}
+
+.edit-vehicle-body {
+    background: white;
+    padding: 30px;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.vehicle-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    border-left: 4px solid #ff9800;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+.info-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.info-value {
+    color: #333;
+    font-weight: bold;
+}
+
+.edit-form {
+    background: #ffffff;
+    border: 1px solid #e3e6f0;
+    border-radius: 10px;
+    padding: 25px;
+}
+
+.calculation-section {
+    background: #fff3e0;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.calc-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.calc-total {
+    font-weight: bold;
+    font-size: 18px;
+    color: #ff9800;
+    border-top: 2px solid #ff9800;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+.btn-update-vehicle {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    width: 100%;
+}
