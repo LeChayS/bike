@@ -11,6 +11,29 @@
     <link rel="stylesheet" href="/css/quanlyuser/permissions.css" />
 }
 
+@section Scripts {
+    <script>
+        // Thêm hiệu ứng cho radio buttons
+        document.querySelectorAll('.radio-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+
+                // Reset style cho tất cả items trong cùng group
+                const name = radio.name;
+                document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                    r.closest('.radio-item').style.borderColor = '#e9ecef';
+                    r.closest('.radio-item').style.background = 'white';
+                });
+
+                // Highlight item được chọn
+                this.style.borderColor = '#007bff';
+                this.style.background = '#f8f9ff';
+            });
+        });
+    </script>
+}
+
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold"><i class="bi bi-shield-check"></i> Quản lý quyền người dùng</h2>
@@ -177,26 +200,3 @@
         </div>
     </form>
 </div>
-
-@section Scripts {
-    <script>
-        // Thêm hiệu ứng cho radio buttons
-        document.querySelectorAll('.radio-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const radio = this.querySelector('input[type="radio"]');
-                radio.checked = true;
-                
-                // Reset style cho tất cả items trong cùng group
-                const name = radio.name;
-                document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
-                    r.closest('.radio-item').style.borderColor = '#e9ecef';
-                    r.closest('.radio-item').style.background = 'white';
-                });
-                
-                // Highlight item được chọn
-                this.style.borderColor = '#007bff';
-                this.style.background = '#f8f9ff';
-            });
-        });
-    </script>
-} 

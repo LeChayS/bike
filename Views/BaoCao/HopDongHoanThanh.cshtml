@@ -8,6 +8,30 @@
     <link href="/css/quanlybaocao/qlbaocao-hopdong-done.css" rel="stylesheet">
 }
 
+@section Scripts {
+    <script>
+        // Auto-submit form when date inputs change
+        document.getElementById('tuNgay').addEventListener('change', function() {
+            if (this.value) {
+                document.querySelector('form').submit();
+            }
+        });
+
+        document.getElementById('denNgay').addEventListener('change', function() {
+            if (this.value) {
+                document.querySelector('form').submit();
+            }
+        });
+
+        // Add loading state to filter button
+        document.querySelector('form').addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang lọc...';
+            submitBtn.disabled = true;
+        });
+    </script>
+} 
+
 <div class="container-fluid">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -155,27 +179,3 @@
         </div>
     }
 </div>
-
-@section Scripts {
-    <script>
-        // Auto-submit form when date inputs change
-        document.getElementById('tuNgay').addEventListener('change', function() {
-            if (this.value) {
-                document.querySelector('form').submit();
-            }
-        });
-
-        document.getElementById('denNgay').addEventListener('change', function() {
-            if (this.value) {
-                document.querySelector('form').submit();
-            }
-        });
-
-        // Add loading state to filter button
-        document.querySelector('form').addEventListener('submit', function() {
-            const submitBtn = this.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang lọc...';
-            submitBtn.disabled = true;
-        });
-    </script>
-} 

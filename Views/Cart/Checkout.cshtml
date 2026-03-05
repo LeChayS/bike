@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="~/css/cart/cart-checkout.css" />
 }
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
 <div class="checkout-container">
     <div class="checkout-header">
         <h2><i class="bi bi-credit-card"></i> Xác nhận đặt chỗ</h2>
@@ -147,7 +153,3 @@
         </form>
     </div>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-} 

@@ -8,6 +8,53 @@
     <link rel="stylesheet" href="~/css/cart/cart-index.css" />
 }
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function removeFromCart(maXe, ngayNhanXe, ngayTraXe)
+        {
+            if (confirm('Bạn có chắc chắn muốn xóa xe này khỏi danh sách?'))
+            {
+                $.ajax({
+                    url: '@Url.Action("Remove", "Cart")',
+                    type: 'POST',
+                    data: {
+                        maXe: maXe,
+                        ngayNhanXe: ngayNhanXe,
+                        ngayTraXe: ngayTraXe,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Reload trang để cập nhật danh sách xe
+                            location.reload();
+
+                            // Cập nhật cart badge nếu có
+                            updateCartBadge(response.cartItemCount);
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                    }
+                });
+            }
+        }
+
+        function updateCartBadge(count) {
+            const badge = $('.cart-badge');
+            if (count > 0) {
+                badge.text(count).show();
+            } else {
+                badge.hide();
+            }
+        }
+    </script>
+}
+
 <div class="cart-container">
     <div class="cart-header">
         <h2><i class="bi bi-cart3"></i> Danh sách xe của tôi</h2>
@@ -98,48 +145,4 @@
             </div>
         }
     </div>
-</div>
-
-<script>
-function removeFromCart(maXe, ngayNhanXe, ngayTraXe) {
-    if (confirm('Bạn có chắc chắn muốn xóa xe này khỏi danh sách?')) {
-        $.ajax({
-            url: '@Url.Action("Remove", "Cart")',
-            type: 'POST',
-            data: {
-                maXe: maXe,
-                ngayNhanXe: ngayNhanXe,
-                ngayTraXe: ngayTraXe,
-                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function(response) {
-                if (response.success) {
-                    // Reload trang để cập nhật danh sách xe
-                    location.reload();
-                    
-                    // Cập nhật cart badge nếu có
-                    updateCartBadge(response.cartItemCount);
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function() {
-                alert('Có lỗi xảy ra. Vui lòng thử lại.');
-            }
-        });
-    }
-}
-
-function updateCartBadge(count) {
-    const badge = $('.cart-badge');
-    if (count > 0) {
-        badge.text(count).show();
-    } else {
-        badge.hide();
-    }
-}
-</script>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-} 
+</div> 

@@ -8,6 +8,23 @@
     <link rel="stylesheet" href="~/css/quanlyhopdong/qlhopdong-lichsukhach.css" />
 }
 
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Focus vào ô tìm kiếm
+            $('input[name="soDienThoai"]').focus();
+
+            // Animation cho timeline
+            $('.timeline-item').each(function(index) {
+                $(this).delay(index * 100).animate({
+                    opacity: 1,
+                    marginLeft: 0
+                }, 500);
+            });
+        });
+    </script>
+}
+
 <div class="history-container">
     <!-- Search Section -->
     <div class="search-section">
@@ -150,20 +167,3 @@
         </div>
     }
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            // Focus vào ô tìm kiếm
-            $('input[name="soDienThoai"]').focus();
-
-            // Animation cho timeline
-            $('.timeline-item').each(function(index) {
-                $(this).delay(index * 100).animate({
-                    opacity: 1,
-                    marginLeft: 0
-                }, 500);
-            });
-        });
-    </script>
-}

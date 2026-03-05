@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="/css/quanlyhopdong/qlhopdong-timphieudaycho.css" />
 }
 
+@section Scripts {
+    <script>
+        // Focus vào ô nhập số điện thoại
+        $(document).ready(function() {
+            $('input[name="soDienThoai"]').focus();
+        });
+    </script>
+}
+
 <div class="search-container">
     <div class="search-card">
         <div class="search-header">
@@ -76,12 +85,3 @@
         </div>
     }
 </div>
-
-@section Scripts {
-    <script>
-        // Focus vào ô nhập số điện thoại
-        $(document).ready(function() {
-            $('input[name="soDienThoai"]').focus();
-        });
-    </script>
-}
