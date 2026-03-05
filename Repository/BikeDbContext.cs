@@ -20,7 +20,6 @@ namespace bike.Repository
         public DbSet<UserPermission> UserPermissions { get; set; }
         public DbSet<DatCho> DatCho { get; set; }
         public DbSet<HopDong> HopDong { get; set; }
-        public DbSet<ChiTieu> ChiTieu { get; set; }
         public DbSet<HoaDon> HoaDon { get; set; }
         public DbSet<Banner> Banner { get; set; }
         public DbSet<ChiTietHopDong> ChiTietHopDong { get; set; }
@@ -33,7 +32,6 @@ namespace bike.Repository
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ChiTieu>(e => e.Property(p => p.SoTien).HasColumnType("decimal(18, 2)"));
             // Cấu hình HopDong
             modelBuilder.Entity<HopDong>(e =>
             {

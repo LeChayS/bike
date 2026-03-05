@@ -60,7 +60,6 @@ namespace bike.Controllers
         {
             var query = _context.Xe
                 .Include(x => x.LoaiXe)
-                .Include(x => x.ChiTieu)
                 .Include(x => x.HinhAnhXes)
                 .AsQueryable();
 
@@ -243,7 +242,6 @@ namespace bike.Controllers
 
             var xe = await _context.Xe
                 .Include(x => x.LoaiXe)
-                .Include(x => x.ChiTieu)
                 .Include(x => x.HinhAnhXes)
                 .Include(x => x.ChiTietHopDong)
                     .ThenInclude(ct => ct.HopDong)
@@ -438,7 +436,6 @@ namespace bike.Controllers
         {
             var xe = await _context.Xe
                 .Include(x => x.LoaiXe)
-                .Include(x => x.ChiTieu)
                 .Include(x => x.HinhAnhXes)
                 .Include(x => x.ChiTietHopDong)
                     .ThenInclude(ct => ct.HopDong)
@@ -450,7 +447,6 @@ namespace bike.Controllers
             }
 
             // Tính toán thống kê
-            var tongChiPhi = xe.ChiTieu?.Sum(c => c.SoTien) ?? 0;
             var soHopDong = xe.ChiTietHopDong?.Count ?? 0;
             var soHinhAnh = xe.HinhAnhXes?.Count ?? 0;
 
@@ -472,7 +468,6 @@ namespace bike.Controllers
                     chiPhiSuaChua = xe.ChiPhiSuaChua,
                     loaiXe = xe.LoaiXe?.TenLoaiXe,
                     hinhAnhHienThi = xe.HinhAnhHienThi,
-                    tongChiPhi = tongChiPhi,
                     soHopDong = soHopDong,
                     soHinhAnh = soHinhAnh
                 }

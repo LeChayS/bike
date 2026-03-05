@@ -43,9 +43,6 @@
                     <td>@xe.LoaiXe?.TenLoaiXe</td>
                     <td>@xe.BienSoXe</td>
                     <td class="text-danger"><strong>@xe.GiaThue.ToString("N0")đ</strong></td>
-                    <td class="text-danger">
-                        <strong>@xe.ChiTieu.Sum(c => c.SoTien).ToString("N0")đ</strong>
-                    </td>
                     <td>
                         @{
                             string badgeClass = xe.TrangThai switch

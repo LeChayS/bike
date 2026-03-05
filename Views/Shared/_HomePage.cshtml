@@ -5,164 +5,19 @@
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
     <meta charset="utf-8" />
-    <link href="~/Content/homepage.css" rel="stylesheet" /> <!--Link CSS-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!--Link Bootstrap 5-->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" /> <!--Link icon-->
-    <link href="~/css/homepage.css" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" /> <!--Link icon-->
+    <link href="~/css/shared/homepage.css" rel="stylesheet">
     @RenderSection("Styles", required: false)
-    
-    <style>
-        .cart-badge {
-            background: #ff0080;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-        
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 25px;
-            transition: all 0.3s;
-            text-transform: uppercase;
-        }
-        
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            color: white;
-        }
-
-        /* Fix dropdown menu bị che */
-        .logo-section {
-            position: relative;
-            z-index: 10000;
-        }
-
-        .logo-section .dropdown {
-            position: relative;
-            z-index: 10001;
-        }
-
-        .logo-section .dropdown-menu {
-            position: absolute !important;
-            top: 100% !important;
-            right: 0 !important;
-            left: auto !important;
-            z-index: 10002 !important;
-            border: none;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            border-radius: 8px;
-            padding: 10px 0;
-            min-width: 200px;
-            margin-top: 5px;
-            background: white;
-        }
-
-        .logo-section .dropdown-item {
-            padding: 10px 20px;
-            font-size: 14px;
-            color: #333;
-            transition: all 0.3s ease;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-        }
-
-        .logo-section .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: #ff0080;
-            padding-left: 25px;
-        }
-
-        .logo-section .dropdown-divider {
-            margin: 8px 0;
-            border-color: #eee;
-        }
-
-        /* Ensure dropdown shows on top of everything */
-        .logo-section .dropdown.show .dropdown-menu {
-            display: block !important;
-            transform: translateY(0);
-            opacity: 1;
-            z-index: 10002 !important;
-        }
-
-        /* Override Bootstrap dropdown styles */
-        .dropdown-toggle::after {
-            border: none;
-            content: "\f107";
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            margin-left: 5px;
-        }
-
-        /* Force dropdown to appear above navbar */
-        .logo-section .dropdown-menu.show {
-            z-index: 10002 !important;
-            position: absolute !important;
-        }
-
-        /* Hide overflow on container to prevent cutting off */
-        .logo-section .container {
-            overflow: visible !important;
-        }
-
-        /* Fix navbar alignment - đảm bảo tất cả nav-link thẳng hàng */
-        .navbar-nav .nav-link {
-            display: flex !important;
-            align-items: center !important;
-            height: auto !important;
-            padding: 0.75rem 1rem !important;
-            line-height: 1.5 !important;
-            vertical-align: middle !important;
-        }
-
-        .navbar-nav .nav-link.dropdown-toggle {
-            display: flex !important;
-            align-items: center !important;
-            padding: 0.75rem 1rem !important;
-        }
-
-        .navbar-nav .nav-item {
-            display: flex !important;
-            align-items: center !important;
-        }
-
-        /* Override Bootstrap dropdown arrow positioning */
-        .navbar-nav .dropdown-toggle::after {
-            margin-left: 0.5rem !important;
-            vertical-align: middle !important;
-            border: none !important;
-            content: "\f107" !important;
-            font-family: "bootstrap-icons" !important;
-            font-weight: normal !important;
-        }
-
-        /* Ensure consistent height for all nav items */
-        .navbar-nav {
-            align-items: center !important;
-        }
-    </style>
-
 </head>
+
 <body>
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <i class="bi bi-clock"></i> THỜI GIAN LÀM VIỆC CHÍNH : 8H - 20H
+                    <i class="bi bi-clock"></i> THỜI GIAN LÀM VIỆC CHÍNH : 8H - 20H | <a asp-action="Index" asp-controller="BaoCao">Trang Admin</a>
                 </div>
                 <div class="col-md-6 text-end">
                     <i class="bi bi-envelope"></i> Email : zzcz4991@gmail.com

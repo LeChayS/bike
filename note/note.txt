@@ -1,0 +1,7 @@
+﻿1. view BarChart trong ThongKeBaoCao không được gọi ở đâu trong trang Admin thống kê báo cáo
+2. ở view Quản lý hóa đơn có 2 nút tạo hóa đơn và báo cáo doanh thu chưa làm
+3. ở trang danh sách xe khi khách đặt xe có lỗi layout đè nhau (file hinh1) sau đó khi thực hiện đặt xe thì hình ko load đc (file hinh2)
+3. màn hình hoàn tất đặt xe của khách có chút lỗi về UI (file hinh3), cái nút xem chi tiết hợp đồng khách hàng ko thể nhấn vì nó sẽ chuyển vào trang admin
+4. khách không thể coi lịch sử đặt chỗ vì chưa có chức năng này
+thanh header không hoạt động khi khách nhấn chọn quản lý profile ở trang chủ
+5. luồng xét duyệt đơn thuê xe bị vướng tại chỗ không thể duyệt đơn ở trang quản lý thuê của admin
